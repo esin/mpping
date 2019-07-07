@@ -97,6 +97,6 @@ func main() {
 
 		fmt.Printf("From you to %s:%s %d msec\n", poolAddr, poolPort, fromUserToPool)
 		poolConnection.Close()
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(500 * time.Second)
 	}
 }
