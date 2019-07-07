@@ -8,32 +8,42 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"time"
+
+	"github.com/asaskevich/govalidator"
 )
 
 func getCurrentTimeStamp() int64 {
 	return time.Now().UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond))
 }
 
-func lookupIPAddr(poolAddr string) string {
+func lookupIPAddr(poolAddr string) (string, string) {
 	ips, err := net.LookupIP(poolAddr)
 	if err != nil {
 		fmt.Printf("Could not get IPs: %v\n", err)
 		os.Exit(1)
 	}
+	ipV4 := ""
+	ipV6 := ""
 	for _, ip := range ips {
-		if strings.Index(ip.String(), ":") < 0 {
-			return ip.String()
+		if govalidator.IsIPv4(ip.String()) && ipV4 == "" {
+			ipV4 = ip.String()
+		}
+		if govalidator.IsIPv6(ip.String()) && ipV6 == "" {
+			ipV6 = ip.String()
 		}
 	}
-	return ""
+	return ipV4, ipV6
 }
 
 type poolStruct struct {
-	Address string
-	Port    string
-	Scheme  string
+	PoolDomain string `json:"pooldomain"`
+	PoolPort   uint16 `json:"port"`
+	PoolIPv4   string `json:"ipv4"`
+	PoolIPv6   string `json:"ipv6"`
+	PoolScheme string
 }
 
 func checkForPoolAddr(urlArg string) (poolStruct, bool) {
@@ -51,9 +61,15 @@ func checkForPoolAddr(urlArg string) (poolStruct, bool) {
 		return newPool, false
 	}
 
-	newPool.Address = parsed.Hostname()
-	newPool.Port = parsed.Port()
-	newPool.Scheme = parsed.Scheme
+	newPool.PoolDomain = parsed.Hostname()
+	port, err := strconv.Atoi(parsed.Port())
+	if err != nil {
+		fmt.Printf("Crazy port: %v", parsed.Port())
+		return newPool, false
+	}
+	newPool.PoolPort = uint16(port)
+	newPool.PoolScheme = parsed.Scheme
+	newPool.PoolIPv4, newPool.PoolIPv6 = lookupIPAddr(newPool.PoolDomain)
 
 	return newPool, true
 }
@@ -71,20 +87,29 @@ func main() {
 
 	request := `{"id":1,"method":"mining.subscribe","params":["mpping-0.1","EthereumStratum/2.0.0"]}`
 	flag.Parse()
+	ipv4ProtoFlag := flag.Bool("4", true, "Ping only pool IP version 4")
+	ipv4Proto := *ipv4ProtoFlag
+	ipv6ProtoFlag := flag.Bool("6", false, "Ping only pool IP version 6")
+	ipv6Proto := *ipv6ProtoFlag
 	//poolAddrOpt := flag.String("pool", "abyss", "Pool address with port (for example: stratum.pool.com:3333")
 
 	poolAddr := ""
 	poolPort := ""
+	poolIPAddr := ""
 
 	for _, arg := range flag.Args() {
 		newPool, ok := checkForPoolAddr(arg)
 		if ok {
-			poolAddr = newPool.Address
-			poolPort = newPool.Port
+			poolAddr = newPool.PoolDomain
+			poolPort = strconv.Itoa(int(newPool.PoolPort))
+			if ipv4Proto {
+				poolIPAddr = newPool.PoolIPv4
+			}
+			if ipv6Proto {
+				poolIPAddr = newPool.PoolIPv6
+			}
 		}
 	}
-
-	poolIPAddr := lookupIPAddr(poolAddr)
 
 	fmt.Printf("MPPING %s:%s (%s:%s)\n", poolAddr, poolPort, poolIPAddr, poolPort)
 
