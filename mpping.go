@@ -42,7 +42,7 @@ func checkForPoolAddr(urlArg string) (poolStruct, bool) {
 
 	strings.TrimLeft(urlArg, " ")
 
-	if (!strings.HasPrefix(strings.ToLower(urlArg), "stratum://")) && (!strings.HasPrefix(strings.ToLower(urlArg), "stratum2://")) {
+	if strings.Index(strings.ToLower(urlArg), "://") < 0 {
 		urlArg = "stratum://" + urlArg
 	}
 
