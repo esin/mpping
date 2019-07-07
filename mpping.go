@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/url"
 	"os"
+	"os/signal"
 	"strings"
 	"time"
 )
@@ -58,6 +59,16 @@ func checkForPoolAddr(urlArg string) (poolStruct, bool) {
 }
 
 func main() {
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		for sig := range c {
+			fmt.Printf("Catched %v", sig)
+			os.Exit(0)
+		}
+	}()
+
 	request := `{"id":1,"method":"mining.subscribe","params":["mpping-0.1","EthereumStratum/2.0.0"]}`
 	flag.Parse()
 	//poolAddrOpt := flag.String("pool", "abyss", "Pool address with port (for example: stratum.pool.com:3333")
@@ -97,6 +108,6 @@ func main() {
 
 		fmt.Printf("From you to %s:%s %d msec\n", poolAddr, poolPort, fromUserToPool)
 		poolConnection.Close()
-		time.Sleep(500 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 }
