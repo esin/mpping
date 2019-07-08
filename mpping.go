@@ -2,8 +2,8 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
+	"log"
 	"net"
 	"net/url"
 	"os"
@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/alexflint/go-arg"
 	"github.com/asaskevich/govalidator"
 )
 
@@ -64,7 +65,7 @@ func checkForPoolAddr(urlArg string) (poolStruct, bool) {
 	newPool.PoolDomain = parsed.Hostname()
 	port, err := strconv.Atoi(parsed.Port())
 	if err != nil {
-		fmt.Printf("Crazy port: %v", parsed.Port())
+		//fmt.Printf("Crazy port: %v", parsed.Port())
 		return newPool, false
 	}
 	newPool.PoolPort = uint16(port)
@@ -80,40 +81,73 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 	go func() {
 		for sig := range c {
-			fmt.Printf("Catched %v", sig)
+			fmt.Printf("Catched %v\n", sig)
 			os.Exit(0)
 		}
 	}()
 
 	request := `{"id":1,"method":"mining.subscribe","params":["mpping-0.1","EthereumStratum/2.0.0"]}`
-	flag.Parse()
-	ipv4ProtoFlag := flag.Bool("4", true, "Ping only pool IP version 4")
-	ipv4Proto := *ipv4ProtoFlag
-	ipv6ProtoFlag := flag.Bool("6", false, "Ping only pool IP version 6")
-	ipv6Proto := *ipv6ProtoFlag
+
+	var args struct {
+		Pool          string `arg:"positional"`
+		ipv4ProtoFlag bool   `arg:"-4" help:"Ping only pool IP version 4"`
+		ipv6ProtoFlag bool   `arg:"-6" help:"Ping only pool IP version 6"`
+		//Dataset  string   `help:"dataset to use"`
+		PacketCount int `arg:"-n" help:"Packets count. Infinity by defaultl"`
+	}
+	arg.MustParse(&args)
+	//flag.Parse()
+	//ipv4ProtoFlag := flag.Bool("4", true, "Ping only pool IP version 4")
+	//ipv4Proto := args.ipv4ProtoFlag //*ipv4ProtoFlag
+
+	//ipv6ProtoFlag := flag.Bool("6", false, "Ping only pool IP version 6")
+	ipv6Proto := args.ipv6ProtoFlag
+	//countPacketsFlag := flag.Uint64("n", 0, "Packets count. Infinity by default")
+	countPacketsFlag := args.PacketCount
+	countPackets := args.PacketCount //*countPacketsFlag
 	//poolAddrOpt := flag.String("pool", "abyss", "Pool address with port (for example: stratum.pool.com:3333")
 
 	poolAddr := ""
 	poolPort := ""
 	poolIPAddr := ""
 
-	for _, arg := range flag.Args() {
-		newPool, ok := checkForPoolAddr(arg)
-		if ok {
-			poolAddr = newPool.PoolDomain
-			poolPort = strconv.Itoa(int(newPool.PoolPort))
-			if ipv4Proto {
-				poolIPAddr = newPool.PoolIPv4
-			}
-			if ipv6Proto {
-				poolIPAddr = newPool.PoolIPv6
-			}
+	//for _, arg := range flag.Args() {
+	//log.Println(arg)
+	log.Println(args.Pool)
+	newPool, ok := checkForPoolAddr(args.Pool)
+	if ok {
+		poolAddr = newPool.PoolDomain
+		poolPort = strconv.Itoa(int(newPool.PoolPort))
+		//if ipv4Proto {
+		poolIPAddr = newPool.PoolIPv4
+		//}
+		if ipv6Proto {
+			poolIPAddr = newPool.PoolIPv6
 		}
 	}
+	//}
+
+	// if poolAddr == "" {
+	//      flag.Usage()
+	//      os.Exit(1)
+	// }
 
 	fmt.Printf("MPPING %s:%s (%s:%s)\n", poolAddr, poolPort, poolIPAddr, poolPort)
+	fmt.Printf("POOLSERVER\t\t\t\tRTT msec\n")
+
+	infinitLoop := true
+	if countPackets > 0 {
+		infinitLoop = false
+	}
 
 	for {
+		if !infinitLoop {
+			if countPackets == 0 {
+				fmt.Printf("Packets total: %d\n", countPacketsFlag)
+				os.Exit(0)
+			}
+			countPackets--
+		}
 		beforeConnect := getCurrentTimeStamp()
 		poolConnection, err := net.Dial("tcp", fmt.Sprintf("%s:%s", poolIPAddr, poolPort))
 		if err != nil {
@@ -131,7 +165,8 @@ func main() {
 
 		fromUserToPool := (firstReply - beforeConnect) / 2
 
-		fmt.Printf("From you to %s:%s %d msec\n", poolAddr, poolPort, fromUserToPool)
+		//fmt.Printf("From you to %s:%s %d msec\n", poolAddr, poolPort, fromUserToPool)
+		fmt.Printf("%s:%s\t\t%d msec\n", poolAddr, poolPort, fromUserToPool)
 		poolConnection.Close()
 		time.Sleep(1 * time.Second)
 	}
