@@ -108,7 +108,7 @@ func main() {
 				poolIPAddr = newPool.PoolIPv4
 			}
 			if ipv6Proto {
-				poolIPAddr = newPool.PoolIPv6
+				poolIPAddr = fmt.Sprintf("[%s]", newPool.PoolIPv6)
 			}
 		}
 	}
@@ -126,36 +126,48 @@ func main() {
 		infinitLoop = false
 	}
 
-	totalPackets := 0 // Count of sent packets
+	//totalPackets := 0 // Count of sent packets
+	var totalPacketsSent, totalPacketsRec uint64
+	var totalTimeMin, totalTimeMax, totalTime uint64
 	for {
 		if !infinitLoop {
 			if countPackets == 0 {
-				fmt.Printf("Packets total: %d\n", totalPackets)
+				fmt.Printf("PACKETS sent/received\t\t %d/%d\n", totalPacketsSent, totalPacketsRec)
+				fmt.Printf("TIME total/min/max/avg\t\t%d ms/%d ms/%d ms/%d ms\n", totalTime, totalTimeMin, totalTimeMax, totalTime/totalPacketsSent)
 				os.Exit(0)
 			}
 			countPackets--
 		}
 		beforeConnect := getCurrentTimeStamp()
+		totalPacketsSent++
 		poolConnection, err := net.Dial("tcp", fmt.Sprintf("%s:%s", poolIPAddr, poolPort))
 		if err != nil {
 			fmt.Println(err)
-			os.Exit(1)
+			//os.Exit(1)
 		}
 		fmt.Fprintf(poolConnection, request+"\n")
 		_, err = bufio.NewReader(poolConnection).ReadString('\n')
 		if err != nil {
 			fmt.Println(err)
-			os.Exit(1)
+			//os.Exit(1)
 		}
 
 		firstReply := getCurrentTimeStamp()
 
-		fromUserToPool := (firstReply - beforeConnect) / 2
+		fromUserToPool := uint64((firstReply - beforeConnect) / 2)
 
 		//fmt.Printf("From you to %s:%s %d msec\n", poolAddr, poolPort, fromUserToPool)
 		fmt.Printf("%s:%s\t\t%d msec\n", poolAddr, poolPort, fromUserToPool)
 		poolConnection.Close()
-		totalPackets++
+		totalTime = totalTime + fromUserToPool
+		if fromUserToPool < totalTimeMin {
+			totalTimeMin = fromUserToPool
+		}
+
+		if fromUserToPool > totalTimeMax {
+			totalTimeMax = fromUserToPool
+		}
+		totalPacketsRec++
 		time.Sleep(1 * time.Second)
 	}
 }
