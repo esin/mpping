@@ -119,7 +119,8 @@ func main() {
 	}
 
 	fmt.Printf("MPPING %s:%s (%s:%s)\n", poolAddr, poolPort, poolIPAddr, poolPort)
-	fmt.Printf("POOLSERVER\t\t\t\tRTT msec\n")
+	//fmt.Printf("POOLSERVER\t\t\t\tRTT msec\n")
+	fmt.Printf("%-37s%-37s\n", "POOLSERVER", "RTT msec")
 
 	infinitLoop := true
 	if countPackets > 0 {
@@ -132,8 +133,8 @@ func main() {
 	for {
 		if !infinitLoop {
 			if countPackets == 0 {
-				fmt.Printf("PACKETS sent/received\t\t %d/%d\n", totalPacketsSent, totalPacketsRec)
 				fmt.Printf("TIME total/min/max/avg\t\t%d ms/%d ms/%d ms/%d ms\n", totalTime, totalTimeMin, totalTimeMax, totalTime/totalPacketsSent)
+				fmt.Printf("PACKETS sent/received\t\t %d/%d\n", totalPacketsSent, totalPacketsRec)
 				os.Exit(0)
 			}
 			countPackets--
@@ -156,8 +157,7 @@ func main() {
 
 		fromUserToPool := uint64((firstReply - beforeConnect) / 2)
 
-		//fmt.Printf("From you to %s:%s %d msec\n", poolAddr, poolPort, fromUserToPool)
-		fmt.Printf("%s:%s\t\t%d msec\n", poolAddr, poolPort, fromUserToPool)
+		fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
 		poolConnection.Close()
 		totalTime = totalTime + fromUserToPool
 		if fromUserToPool < totalTimeMin {
