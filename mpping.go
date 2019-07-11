@@ -39,11 +39,16 @@ func lookupIPAddr(poolAddr string) (string, string) {
 }
 
 type poolStruct struct {
-	PoolDomain string `json:"pooldomain"`
-	PoolPort   uint16 `json:"port"`
-	PoolIPv4   string `json:"ipv4"`
-	PoolIPv6   string `json:"ipv6"`
-	PoolScheme string
+	PoolDomain           string `json:"pooldomain"`
+	PoolPort             uint16 `json:"port"`
+	PoolIPv4             string `json:"ipv4"`
+	PoolIPv6             string `json:"ipv6"`
+	PoolScheme           string
+	TotalPacketsSent     uint64
+	TotalPacketsReceived uint64
+	TotalTimeMin         uint64
+	TotalTimeMax         uint64
+	TotalTime            uint64
 }
 
 func checkForPoolAddr(urlArg string) (poolStruct, bool) {
@@ -74,6 +79,11 @@ func checkForPoolAddr(urlArg string) (poolStruct, bool) {
 	return newPool, true
 }
 
+func onStop() {
+
+	os.Exit(0)
+}
+
 func main() {
 
 	c := make(chan os.Signal, 1)
@@ -81,6 +91,7 @@ func main() {
 	go func() {
 		for sig := range c {
 			fmt.Printf("Catched %v\n", sig)
+			onStop()
 			os.Exit(0)
 		}
 	}()
@@ -114,12 +125,13 @@ func main() {
 	}
 
 	if poolAddr == "" {
+		fmt.Println("MPPING - Mining Pool Ping tool, which counts time from you to first reply of mining pool")
+		fmt.Println("Usage:")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
 
 	fmt.Printf("MPPING %s:%s (%s:%s)\n", poolAddr, poolPort, poolIPAddr, poolPort)
-	//fmt.Printf("POOLSERVER\t\t\t\tRTT msec\n")
 	fmt.Printf("%-37s%-37s\n", "POOLSERVER", "RTT msec")
 
 	infinitLoop := true
@@ -127,7 +139,6 @@ func main() {
 		infinitLoop = false
 	}
 
-	//totalPackets := 0 // Count of sent packets
 	var totalPacketsSent, totalPacketsRec uint64
 	var totalTimeMin, totalTimeMax, totalTime uint64
 	for {
