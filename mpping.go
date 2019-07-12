@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"log"
 	"net"
 	"net/url"
 	"os"
@@ -74,7 +75,18 @@ func checkForPoolAddr(urlArg string) (poolStruct, bool) {
 	}
 	newPool.PoolPort = uint16(port)
 	newPool.PoolScheme = parsed.Scheme
-	newPool.PoolIPv4, newPool.PoolIPv6 = lookupIPAddr(newPool.PoolDomain)
+
+	if govalidator.IsHost(newPool.PoolDomain) {
+		newPool.PoolIPv4, newPool.PoolIPv6 = lookupIPAddr(newPool.PoolDomain)
+	}
+
+	if govalidator.IsIPv4(newPool.PoolDomain) {
+		newPool.PoolIPv4 = newPool.PoolDomain
+	}
+
+	if govalidator.IsIPv6(newPool.PoolDomain) {
+		newPool.PoolIPv6 = newPool.PoolDomain
+	}
 
 	return newPool, true
 }
@@ -83,6 +95,8 @@ func onStop() {
 
 	os.Exit(0)
 }
+
+var poolList []poolStruct
 
 func main() {
 
@@ -109,6 +123,7 @@ func main() {
 	ipv4Proto := *ipv4ProtoFlag
 	ipv6Proto := *ipv6ProtoFlag
 	countPackets := *countPacketsFlag
+	poolList = make([]poolStruct, 0)
 
 	for _, arg := range flag.Args() {
 		newPool, ok := checkForPoolAddr(arg)
@@ -121,8 +136,11 @@ func main() {
 			if ipv6Proto {
 				poolIPAddr = fmt.Sprintf("[%s]", newPool.PoolIPv6)
 			}
+			poolList = append(poolList, newPool)
 		}
 	}
+
+	log.Println(poolList)
 
 	if poolAddr == "" {
 		fmt.Println("MPPING - Mining Pool Ping tool, which counts time from you to first reply of mining pool")
