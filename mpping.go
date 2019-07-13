@@ -23,8 +23,8 @@ func getCurrentTimeStamp() int64 {
 func lookupIPAddr(poolAddr string) (string, string) {
 	ips, err := net.LookupIP(poolAddr)
 	if err != nil {
-		fmt.Printf("Could not get IPs: %v\n", err)
-		os.Exit(1)
+		fmt.Printf("%s: %v\n", poolAddr, err)
+		//os.Exit(1)
 	}
 	ipV4 := ""
 	ipV6 := ""
@@ -88,6 +88,10 @@ func checkForPoolAddr(urlArg string) (poolStruct, bool) {
 		newPool.PoolIPv6 = newPool.PoolDomain
 	}
 
+	if newPool.PoolIPv4 == "" && newPool.PoolIPv6 == "" {
+		return newPool, false
+	}
+
 	return newPool, true
 }
 
@@ -141,6 +145,9 @@ func main() {
 	}
 
 	log.Println(poolList)
+	if len(poolList) == 0 {
+		os.Exit(2)
+	}
 
 	if poolAddr == "" {
 		fmt.Println("MPPING - Mining Pool Ping tool, which counts time from you to first reply of mining pool")
