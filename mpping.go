@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"log"
 	"net"
 	"net/url"
 	"os"
@@ -144,8 +143,9 @@ func main() {
 		}
 	}
 
-	log.Println(poolList)
 	if len(poolList) == 0 {
+		fmt.Println("No pools found")
+		flag.PrintDefaults()
 		os.Exit(2)
 	}
 
