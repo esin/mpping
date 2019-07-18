@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"log"
 	"net"
 	"net/url"
 	"os"
@@ -99,6 +100,7 @@ var poolList []poolStruct
 func onStop() {
 
 	for _, poolServer := range poolList {
+		log.Println(poolServer)
 		fmt.Printf("TIME total/min/max/avg\t\t%d ms/%d ms/%d ms/%d ms\n", poolServer.TotalTime, poolServer.TotalTimeMin, poolServer.TotalTimeMax, poolServer.TotalTime/poolServer.TotalPacketsSent)
 		fmt.Printf("PACKETS sent/received\t\t %d/%d\n", poolServer.TotalPacketsSent, poolServer.TotalPacketsReceived)
 	}
@@ -144,8 +146,6 @@ func main() {
 		fmt.Println("MPPING - Mining Pool Ping tool, which counts time from you to first reply of mining pool")
 		fmt.Println("Usage:")
 		flag.PrintDefaults()
-		fmt.Println("No pools found")
-		flag.PrintDefaults()
 		os.Exit(2)
 	}
 
@@ -157,7 +157,7 @@ func main() {
 		infinitLoop = false
 	}
 
-	for _, poolServer := range poolList {
+	for poolID, poolServer := range poolList {
 
 		poolAddr = poolServer.PoolDomain
 		poolPort = strconv.Itoa(int(poolServer.PoolPort))
@@ -182,7 +182,7 @@ func main() {
 			}
 			beforeConnect := getCurrentTimeStamp()
 			//totalPacketsSent++
-			poolServer.TotalPacketsSent++
+			poolList[poolID].TotalPacketsSent++
 			poolConnection, err := net.Dial("tcp", fmt.Sprintf("%s:%s", poolIPAddr, poolPort))
 			if err != nil {
 				fmt.Println(err)
@@ -199,19 +199,19 @@ func main() {
 
 			fromUserToPool := uint64((firstReply - beforeConnect))
 
-			fmt.Printf("\r%-37s%-37s", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
+			fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
 
 			poolConnection.Close()
 			//totalTime = totalTime + fromUserToPool
-			poolServer.TotalTime += fromUserToPool
-			if fromUserToPool < poolServer.TotalTimeMin {
-				poolServer.TotalTimeMin = fromUserToPool
+			poolList[poolID].TotalTime += fromUserToPool
+			if fromUserToPool < poolList[poolID].TotalTimeMin {
+				poolList[poolID].TotalTimeMin = fromUserToPool
 			}
 
 			if fromUserToPool > poolServer.TotalTimeMax {
-				poolServer.TotalTimeMax = fromUserToPool
+				poolList[poolID].TotalTimeMax = fromUserToPool
 			}
-			poolServer.TotalPacketsReceived++
+			poolList[poolID].TotalPacketsReceived++
 			time.Sleep(1 * time.Second)
 		}
 	}
