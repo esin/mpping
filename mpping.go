@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"log"
 	"net"
 	"net/url"
 	"os"
@@ -100,8 +99,7 @@ var poolList []poolStruct
 func onStop() {
 
 	for _, poolServer := range poolList {
-		log.Println(poolServer)
-		fmt.Printf("TIME total/min/max/avg\t\t%d ms/%d ms/%d ms/%d ms\n", poolServer.TotalTime, poolServer.TotalTimeMin, poolServer.TotalTimeMax, poolServer.TotalTime/poolServer.TotalPacketsSent)
+		fmt.Printf("TIME total/min/max/avg\t\t%d ms/%d ms/%d ms/%d ms\n", poolServer.TotalTime, poolServer.TotalTimeMin, poolServer.TotalTimeMax, poolServer.TotalTime/poolServer.TotalPacketsReceived)
 		fmt.Printf("PACKETS sent/received\t\t %d/%d\n", poolServer.TotalPacketsSent, poolServer.TotalPacketsReceived)
 	}
 
@@ -112,12 +110,10 @@ func main() {
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
+
 	go func() {
-		for sig := range c {
-			fmt.Printf("Catched %v\n", sig)
-			onStop()
-			os.Exit(0)
-		}
+		<-c
+		onStop()
 	}()
 
 	request := `{"id":1,"method":"mining.subscribe","params":["mpping-0.1","EthereumStratum/2.0.0"]}`
@@ -176,7 +172,6 @@ func main() {
 				if countPackets == 0 {
 					fmt.Println()
 					onStop()
-					os.Exit(0)
 				}
 				countPackets--
 			}
@@ -204,15 +199,18 @@ func main() {
 			poolConnection.Close()
 			//totalTime = totalTime + fromUserToPool
 			poolList[poolID].TotalTime += fromUserToPool
-			if fromUserToPool < poolList[poolID].TotalTimeMin {
+			if fromUserToPool < poolList[poolID].TotalTimeMin || poolList[poolID].TotalTimeMin == 0 {
 				poolList[poolID].TotalTimeMin = fromUserToPool
 			}
 
-			if fromUserToPool > poolServer.TotalTimeMax {
+			if fromUserToPool > poolServer.TotalTimeMax || poolList[poolID].TotalTimeMax == 0 {
 				poolList[poolID].TotalTimeMax = fromUserToPool
 			}
 			poolList[poolID].TotalPacketsReceived++
 			time.Sleep(1 * time.Second)
 		}
 	}
+	<-c
+
+	os.Exit(0)
 }
