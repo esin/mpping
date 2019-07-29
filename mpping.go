@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/sethgrid/curse"
 )
 
 func getCurrentTimeStamp() int64 {
@@ -99,6 +100,7 @@ var poolList []poolStruct
 func onStop() {
 
 	for _, poolServer := range poolList {
+		fmt.Println()
 		fmt.Printf("TIME total/min/max/avg\t\t%d ms/%d ms/%d ms/%d ms\n", poolServer.TotalTime, poolServer.TotalTimeMin, poolServer.TotalTimeMax, poolServer.TotalTime/poolServer.TotalPacketsReceived)
 		fmt.Printf("PACKETS sent/received\t\t %d/%d\n", poolServer.TotalPacketsSent, poolServer.TotalPacketsReceived)
 	}
@@ -153,62 +155,68 @@ func main() {
 		infinitLoop = false
 	}
 
-	for poolID, poolServer := range poolList {
+	currentCurse, _ := curse.New()
+	//currentCursorPosition := currentCurse.Position
 
-		poolAddr = poolServer.PoolDomain
-		poolPort = strconv.Itoa(int(poolServer.PoolPort))
-		if ipv4Proto {
-			poolIPAddr = poolServer.PoolIPv4
-		}
-		if ipv6Proto {
-			poolIPAddr = fmt.Sprintf("[%s]", poolServer.PoolIPv6)
-		}
-
-		//var totalPacketsSent, totalPacketsRec uint64
-		//var totalTimeMin, totalTimeMax, totalTime uint64
-
-		for {
-			if !infinitLoop {
-				if countPackets == 0 {
-					fmt.Println()
-					onStop()
-				}
-				countPackets--
+	for {
+		if !infinitLoop {
+			if countPackets*len(poolList) == 0 {
+				fmt.Println()
+				onStop()
 			}
+			countPackets--
+		}
+		for poolID, poolServer := range poolList {
+
+			poolAddr = poolServer.PoolDomain
+			poolPort = strconv.Itoa(int(poolServer.PoolPort))
+			if ipv4Proto {
+				poolIPAddr = poolServer.PoolIPv4
+			}
+			if ipv6Proto {
+				poolIPAddr = fmt.Sprintf("[%s]", poolServer.PoolIPv6)
+			}
+
 			beforeConnect := getCurrentTimeStamp()
 			//totalPacketsSent++
 			poolList[poolID].TotalPacketsSent++
 			poolConnection, err := net.Dial("tcp", fmt.Sprintf("%s:%s", poolIPAddr, poolPort))
 			if err != nil {
 				fmt.Println(err)
-				//os.Exit(1)
 			}
 			fmt.Fprintf(poolConnection, request+"\n")
 			_, err = bufio.NewReader(poolConnection).ReadString('\n')
 			if err != nil {
 				fmt.Println(err)
-				//os.Exit(1)
 			}
 
 			firstReply := getCurrentTimeStamp()
 
 			fromUserToPool := uint64((firstReply - beforeConnect))
 
-			fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
-
 			poolConnection.Close()
-			//totalTime = totalTime + fromUserToPool
+
 			poolList[poolID].TotalTime += fromUserToPool
 			if fromUserToPool < poolList[poolID].TotalTimeMin || poolList[poolID].TotalTimeMin == 0 {
 				poolList[poolID].TotalTimeMin = fromUserToPool
 			}
 
-			if fromUserToPool > poolServer.TotalTimeMax || poolList[poolID].TotalTimeMax == 0 {
+			if fromUserToPool > poolList[poolID].TotalTimeMax || poolList[poolID].TotalTimeMax == 0 {
 				poolList[poolID].TotalTimeMax = fromUserToPool
 			}
+
+			//fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
+			var avgTime uint64
+			if poolList[poolID].TotalPacketsReceived != 0 {
+				avgTime = poolList[poolID].TotalTime / poolList[poolID].TotalPacketsReceived
+			}
+			fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("MIN: %d msec MAX: %d msec AVG: %d msec", poolList[poolID].TotalTimeMin, poolList[poolID].TotalTimeMax, avgTime))
+
 			poolList[poolID].TotalPacketsReceived++
+
 			time.Sleep(1 * time.Second)
 		}
+		currentCurse.MoveUp(len(poolList))
 	}
 	<-c
 
