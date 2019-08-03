@@ -102,11 +102,14 @@ func onStop() {
 	if len(poolList) == 1 {
 		poolServer := poolList[0]
 		fmt.Println()
-		fmt.Printf("TIME total/min/max/avg\t\t%d ms/%d ms/%d ms/%d ms\n", poolServer.TotalTime, poolServer.TotalTimeMin, poolServer.TotalTimeMax, poolServer.TotalTime/poolServer.TotalPacketsReceived)
-		fmt.Printf("PACKETS sent/received\t\t %d/%d\n", poolServer.TotalPacketsSent, poolServer.TotalPacketsReceived)
+
+		fmt.Printf("TIME\ntotal/min/max/avg:\t\t%d ms / %d ms / %d ms / %d ms\n", poolServer.TotalTime, poolServer.TotalTimeMin, poolServer.TotalTimeMax, poolServer.TotalTime/poolServer.TotalPacketsReceived)
+		fmt.Printf("PACKETS\nsent/received:\t\t%d / %d\n", poolServer.TotalPacketsSent, poolServer.TotalPacketsReceived)
 	}
 
-	fmt.Println()
+	if len(poolList) > 1 {
+		fmt.Println()
+	}
 
 	os.Exit(0)
 }
@@ -229,7 +232,10 @@ func main() {
 
 			time.Sleep(1 * time.Second)
 		}
-		currentCurse.MoveUp(len(poolList))
+
+		if poolListCount > 1 {
+			currentCurse.MoveUp(poolListCount)
+		}
 	}
 
 	<-c
