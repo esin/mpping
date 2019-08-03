@@ -99,7 +99,8 @@ var poolList []poolStruct
 
 func onStop() {
 
-	for _, poolServer := range poolList {
+	if len(poolList) == 1 {
+		poolServer = poolList[0]
 		fmt.Println()
 		fmt.Printf("TIME total/min/max/avg\t\t%d ms/%d ms/%d ms/%d ms\n", poolServer.TotalTime, poolServer.TotalTimeMin, poolServer.TotalTimeMax, poolServer.TotalTime/poolServer.TotalPacketsReceived)
 		fmt.Printf("PACKETS sent/received\t\t %d/%d\n", poolServer.TotalPacketsSent, poolServer.TotalPacketsReceived)
@@ -205,14 +206,14 @@ func main() {
 				poolList[poolID].TotalTimeMax = fromUserToPool
 			}
 
+			poolList[poolID].TotalPacketsReceived++
+
 			//fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
 			var avgTime uint64
 			if poolList[poolID].TotalPacketsReceived != 0 {
 				avgTime = poolList[poolID].TotalTime / poolList[poolID].TotalPacketsReceived
 			}
 			fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("MIN: %d msec MAX: %d msec AVG: %d msec", poolList[poolID].TotalTimeMin, poolList[poolID].TotalTimeMax, avgTime))
-
-			poolList[poolID].TotalPacketsReceived++
 
 			time.Sleep(1 * time.Second)
 		}
