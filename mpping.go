@@ -195,11 +195,12 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
+
 			fmt.Fprintf(poolConnection, request+"\n")
-			_, err = bufio.NewReader(poolConnection).ReadString('\n')
-			if err != nil {
-				fmt.Println(err)
-			}
+			_, _ = bufio.NewReader(poolConnection).ReadString('\n')
+			// if err != nil {
+			// 	fmt.Println(err)
+			// }
 
 			firstReply := getCurrentTimeStamp()
 
