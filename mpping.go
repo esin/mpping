@@ -100,11 +100,13 @@ var poolList []poolStruct
 func onStop() {
 
 	if len(poolList) == 1 {
-		poolServer = poolList[0]
+		poolServer := poolList[0]
 		fmt.Println()
 		fmt.Printf("TIME total/min/max/avg\t\t%d ms/%d ms/%d ms/%d ms\n", poolServer.TotalTime, poolServer.TotalTimeMin, poolServer.TotalTimeMax, poolServer.TotalTime/poolServer.TotalPacketsReceived)
 		fmt.Printf("PACKETS sent/received\t\t %d/%d\n", poolServer.TotalPacketsSent, poolServer.TotalPacketsReceived)
 	}
+
+	fmt.Println()
 
 	os.Exit(0)
 }
@@ -141,15 +143,22 @@ func main() {
 		}
 	}
 
-	if len(poolList) == 0 {
+	poolListCount := len(poolList)
+
+	if poolListCount == 0 {
 		fmt.Println("MPPING - Mining Pool Ping tool, which counts time from you to first reply of mining pool")
 		fmt.Println("Usage:")
 		flag.PrintDefaults()
 		os.Exit(2)
 	}
 
-	//fmt.Printf("MPPING %s:%s (%s:%s)\n", poolAddr, poolPort, poolIPAddr, poolPort)
-	fmt.Printf("%-37s%-37s\n", "POOLSERVER", "RTT msec")
+	if poolListCount == 1 {
+		fmt.Printf("%-37s%-37s\n", "POOLSERVER", "RTT msec")
+	}
+
+	if poolListCount > 1 {
+		fmt.Printf("%-37s%-37s%-37s\n", "POOLSERVER", "RTT MIN / MAX / AVG", "PACKETS SEND / RECV")
+	}
 
 	infinitLoop := true
 	if countPackets > 0 {
@@ -157,11 +166,10 @@ func main() {
 	}
 
 	currentCurse, _ := curse.New()
-	//currentCursorPosition := currentCurse.Position
 
 	for {
 		if !infinitLoop {
-			if countPackets*len(poolList) == 0 {
+			if countPackets*poolListCount == 0 {
 				fmt.Println()
 				onStop()
 			}
@@ -179,7 +187,6 @@ func main() {
 			}
 
 			beforeConnect := getCurrentTimeStamp()
-			//totalPacketsSent++
 			poolList[poolID].TotalPacketsSent++
 			poolConnection, err := net.Dial("tcp", fmt.Sprintf("%s:%s", poolIPAddr, poolPort))
 			if err != nil {
@@ -208,17 +215,23 @@ func main() {
 
 			poolList[poolID].TotalPacketsReceived++
 
-			//fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
 			var avgTime uint64
 			if poolList[poolID].TotalPacketsReceived != 0 {
 				avgTime = poolList[poolID].TotalTime / poolList[poolID].TotalPacketsReceived
 			}
-			fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("MIN: %d msec MAX: %d msec AVG: %d msec", poolList[poolID].TotalTimeMin, poolList[poolID].TotalTimeMax, avgTime))
+			
+			if poolListCount == 1 {
+				fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
+			}
+			if poolListCount > 1 {
+				fmt.Printf("%-37s%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d ms / %d ms / %d ms", poolList[poolID].TotalTimeMin, poolList[poolID].TotalTimeMax, avgTime), fmt.Sprintf("%d / %d", poolList[poolID].TotalPacketsSent, poolList[poolID].TotalPacketsReceived))
+			}
 
 			time.Sleep(1 * time.Second)
 		}
 		currentCurse.MoveUp(len(poolList))
 	}
+
 	<-c
 
 	os.Exit(0)
