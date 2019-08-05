@@ -100,6 +100,8 @@ var poolList []poolStruct
 
 func onStop() {
 
+	fmt.Print("\033[?25h") // Show cursor
+
 	if len(poolList) == 1 {
 		poolServer := poolList[0]
 		fmt.Println()
@@ -159,6 +161,8 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(2)
 	}
+
+	fmt.Print("\033[?25l") // Hide cursor
 
 	if len(badPoolList) > 0 {
 		fmt.Printf("%-37s%-37s\n", "POOLSERVER", "ERROR")
