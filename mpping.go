@@ -20,11 +20,11 @@ func getCurrentTimeStamp() int64 {
 	return time.Now().UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond))
 }
 
-func lookupIPAddr(poolAddr string) (string, string) {
+func lookupIPAddr(poolAddr string) (string, string, string) {
+	errstring := ""
 	ips, err := net.LookupIP(poolAddr)
 	if err != nil {
-		fmt.Printf("%s: %v\n", poolAddr, err)
-		//os.Exit(1)
+		errstring = fmt.Sprintf("%v", err)
 	}
 	ipV4 := ""
 	ipV6 := ""
@@ -36,7 +36,7 @@ func lookupIPAddr(poolAddr string) (string, string) {
 			ipV6 = ip.String()
 		}
 	}
-	return ipV4, ipV6
+	return ipV4, ipV6, errstring
 }
 
 type poolStruct struct {
@@ -50,6 +50,7 @@ type poolStruct struct {
 	TotalTimeMin         uint64
 	TotalTimeMax         uint64
 	TotalTime            uint64
+	PoolError            string
 }
 
 func checkForPoolAddr(urlArg string) (poolStruct, bool) {
@@ -70,14 +71,14 @@ func checkForPoolAddr(urlArg string) (poolStruct, bool) {
 	newPool.PoolDomain = parsed.Hostname()
 	port, err := strconv.Atoi(parsed.Port())
 	if err != nil {
-		//fmt.Printf("Crazy port: %v", parsed.Port())
+		newPool.PoolError = fmt.Sprintf("Pool has crazy port: %d", port)
 		return newPool, false
 	}
 	newPool.PoolPort = uint16(port)
 	newPool.PoolScheme = parsed.Scheme
 
 	if govalidator.IsHost(newPool.PoolDomain) {
-		newPool.PoolIPv4, newPool.PoolIPv6 = lookupIPAddr(newPool.PoolDomain)
+		newPool.PoolIPv4, newPool.PoolIPv6, newPool.PoolError = lookupIPAddr(newPool.PoolDomain)
 	}
 
 	if govalidator.IsIPv4(newPool.PoolDomain) {
@@ -139,20 +140,32 @@ func main() {
 	countPackets := *countPacketsFlag
 	poolList = make([]poolStruct, 0)
 
+	badPoolList := make([]poolStruct, 0) //Just for pretty print
+
 	for _, arg := range flag.Args() {
 		newPool, ok := checkForPoolAddr(arg)
 		if ok {
 			poolList = append(poolList, newPool)
+		} else {
+			badPoolList = append(badPoolList, newPool)
 		}
 	}
 
 	poolListCount := len(poolList)
 
-	if poolListCount == 0 {
+	if poolListCount == 0 && len(flag.Args()) == 0 {
 		fmt.Println("MPPING - Mining Pool Ping tool, which counts time from you to first reply of mining pool")
 		fmt.Println("Usage:")
 		flag.PrintDefaults()
 		os.Exit(2)
+	}
+
+	if len(badPoolList) > 0 {
+		fmt.Printf("%-37s%-37s\n", "POOLSERVER", "ERROR")
+		for _, poolServer := range badPoolList {
+			poolPort = strconv.Itoa(int(poolServer.PoolPort))
+			fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolServer.PoolDomain, poolPort), poolServer.PoolError)
+		}
 	}
 
 	if poolListCount == 1 {
@@ -223,7 +236,7 @@ func main() {
 			if poolList[poolID].TotalPacketsReceived != 0 {
 				avgTime = poolList[poolID].TotalTime / poolList[poolID].TotalPacketsReceived
 			}
-			
+
 			if poolListCount == 1 {
 				fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
 			}
