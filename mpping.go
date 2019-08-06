@@ -111,7 +111,7 @@ func onStop() {
 	}
 
 	if len(poolList) > 1 {
-		fmt.Println()
+		fmt.Print("\n\n")
 	}
 
 	os.Exit(0)
