@@ -59,4 +59,12 @@ rtt min/avg/max/mdev = 24.731/24.802/24.849/0.203 ms
 
 Разумеется, пакет от граничного сервера до самого сервера пула идёт по кратчайшему пути, но этот путь не покажет утилита ping
 
-Для более качественной проверки связи до пула и выбора пула для майнига была написана утилита `mpping`
+Для более качественной проверки связи до пула и выбора пула для майнига была написана утилита `mpping`:
+
+```
+mpping -count=5 asia1-zcash.flypool.org:3333 eu1-zcash.flypool.org:3333 us1-zcash.flypool.org:3333
+POOLSERVER                           RTT MIN / MAX / AVG                  PACKETS SEND / RECV                  
+asia1-zcash.flypool.org:3333         756 ms / 1781 ms / 1054 ms           5 / 5                                
+eu1-zcash.flypool.org:3333           191 ms / 1377 ms / 471 ms            5 / 5                                
+us1-zcash.flypool.org:3333           397 ms / 922 ms / 689 ms             5 / 5 
+```
