@@ -104,7 +104,7 @@ func onStop() {
 
 	if len(poolList) == 1 {
 		poolServer := poolList[0]
-		fmt.Println()
+		fmt.Println("-----STATISTICS-----")
 
 		fmt.Printf("TIME\ntotal/min/max/avg:\t\t%d ms / %d ms / %d ms / %d ms\n", poolServer.TotalTime, poolServer.TotalTimeMin, poolServer.TotalTimeMax, poolServer.TotalTime/poolServer.TotalPacketsReceived)
 		fmt.Printf("PACKETS\nsent/received:\t\t%d / %d\n", poolServer.TotalPacketsSent, poolServer.TotalPacketsReceived)
@@ -242,7 +242,7 @@ func main() {
 			}
 
 			if poolListCount == 1 {
-				fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
+				fmt.Printf("%-37s%-37s", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
 			}
 			if poolListCount > 1 {
 				fmt.Printf("%-37s%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d ms / %d ms / %d ms", poolList[poolID].TotalTimeMin, poolList[poolID].TotalTimeMax, avgTime), fmt.Sprintf("%d / %d", poolList[poolID].TotalPacketsSent, poolList[poolID].TotalPacketsReceived))
