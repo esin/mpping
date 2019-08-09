@@ -97,20 +97,19 @@ func checkForPoolAddr(urlArg string) (poolStruct, bool) {
 }
 
 var poolList []poolStruct
+var oldStylePing bool
 
 func onStop() {
 
 	fmt.Print("\033[?25h") // Show cursor
 
-	if len(poolList) == 1 {
+	if oldStylePing {
 		poolServer := poolList[0]
 		fmt.Println("-----STATISTICS-----")
 
 		fmt.Printf("TIME\ntotal/min/max/avg:\t\t%d ms / %d ms / %d ms / %d ms\n", poolServer.TotalTime, poolServer.TotalTimeMin, poolServer.TotalTimeMax, poolServer.TotalTime/poolServer.TotalPacketsReceived)
 		fmt.Printf("PACKETS\nsent/received:\t\t%d / %d\n", poolServer.TotalPacketsSent, poolServer.TotalPacketsReceived)
-	}
-
-	if len(poolList) > 1 {
+	} else {
 		fmt.Print("\n\n")
 	}
 
@@ -132,6 +131,7 @@ func main() {
 	ipv4ProtoFlag := flag.Bool("4", true, "Ping only pool IP version 4")
 	ipv6ProtoFlag := flag.Bool("6", false, "Ping only pool IP version 6")
 	countPacketsFlag := flag.Int("count", 0, "Packets count. Inifinity by default")
+	oldStylePingFlag := flag.Bool("oldstyle", false, "Ping like a classic ping. One packet - one line")
 
 	flag.Parse()
 	poolAddr := ""
@@ -140,6 +140,7 @@ func main() {
 	ipv4Proto := *ipv4ProtoFlag
 	ipv6Proto := *ipv6ProtoFlag
 	countPackets := *countPacketsFlag
+	oldStylePing = *oldStylePingFlag
 	poolList = make([]poolStruct, 0)
 
 	badPoolList := make([]poolStruct, 0) //Just for pretty print
@@ -172,11 +173,9 @@ func main() {
 		}
 	}
 
-	if poolListCount == 1 {
+	if oldStylePing {
 		fmt.Printf("%-37s%-37s\n", "POOLSERVER", "RTT msec")
-	}
-
-	if poolListCount > 1 {
+	} else {
 		fmt.Printf("%-37s%-37s%-37s\n", "POOLSERVER", "RTT MIN / MAX / AVG", "PACKETS SEND / RECV")
 	}
 
@@ -215,9 +214,6 @@ func main() {
 
 			fmt.Fprintf(poolConnection, request+"\n")
 			_, _ = bufio.NewReader(poolConnection).ReadString('\n')
-			// if err != nil {
-			// 	fmt.Println(err)
-			// }
 
 			firstReply := getCurrentTimeStamp()
 
@@ -241,17 +237,16 @@ func main() {
 				avgTime = poolList[poolID].TotalTime / poolList[poolID].TotalPacketsReceived
 			}
 
-			if poolListCount == 1 {
+			if oldStylePing {
 				fmt.Printf("%-37s%-37s", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d msec", fromUserToPool))
-			}
-			if poolListCount > 1 {
+			} else {
 				fmt.Printf("%-37s%-37s%-37s\n", fmt.Sprintf("%s:%s", poolAddr, poolPort), fmt.Sprintf("%d ms / %d ms / %d ms", poolList[poolID].TotalTimeMin, poolList[poolID].TotalTimeMax, avgTime), fmt.Sprintf("%d / %d", poolList[poolID].TotalPacketsSent, poolList[poolID].TotalPacketsReceived))
 			}
 
 			time.Sleep(1 * time.Second)
 		}
 
-		if poolListCount > 1 {
+		if !oldStylePing {
 			currentCurse.MoveUp(poolListCount)
 		}
 	}
