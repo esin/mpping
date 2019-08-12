@@ -194,10 +194,42 @@ func main() {
 			}
 			countPackets--
 		}
+
+		// for i := len(poolList) - 1; i >= 0; i-- { // Remove bad pools. TODO: move into separate func
+		// 	if poolList[i].PoolError != "" {
+		// 		if len(poolList) == 1 {
+		// 			if len(badPoolList) > 0 {
+		// 				fmt.Printf("%-37s%-37s\n", "POOLSERVER", "ERROR")
+		// 				for _, poolServer := range badPoolList {
+		// 					poolPort = strconv.Itoa(int(poolServer.PoolPort))
+		// 					fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolServer.PoolDomain, poolPort), poolServer.PoolError)
+		// 				}
+		// 			}
+		// 			onStop()
+		// 		}
+		// 		poolList = append(poolList[:i], poolList[i+i:]...)
+		// 	}
+		// }
+
+		if len(poolList) == 0 {
+			onStop()
+		}
+
 		for poolID, poolServer := range poolList {
+
+			if poolServer.PoolError != "" {
+				poolPort = strconv.Itoa(int(poolServer.PoolPort))
+				fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolServer.PoolDomain, poolPort), poolServer.PoolError)
+				if len(poolList) == 1 {
+					onStop()
+				}
+
+				continue
+			}
 
 			poolAddr = poolServer.PoolDomain
 			poolPort = strconv.Itoa(int(poolServer.PoolPort))
+
 			if ipv4Proto {
 				poolIPAddr = poolServer.PoolIPv4
 			}
@@ -209,7 +241,11 @@ func main() {
 			poolList[poolID].TotalPacketsSent++
 			poolConnection, err := net.Dial("tcp", fmt.Sprintf("%s:%s", poolIPAddr, poolPort))
 			if err != nil {
-				fmt.Println(err)
+				poolList[poolID].PoolError = fmt.Sprintf("%v", err)
+				//badPoolList = append(badPoolList, poolList[poolID])
+				poolPort = strconv.Itoa(int(poolServer.PoolPort))
+				fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolServer.PoolDomain, poolPort), fmt.Sprintf("%v", err))
+				continue
 			}
 
 			fmt.Fprintf(poolConnection, request+"\n")
