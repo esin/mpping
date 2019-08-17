@@ -61,6 +61,7 @@
         }
         var beforeConnect = new Date().getTime();
         try {
+          var proto = location.protocol == "https" ? "https" : "http";
           poolConnection.open("GET", "http://" + host + ":" + port, true);
 
           poolConnection.onreadystatechange = function() {
