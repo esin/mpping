@@ -1,75 +1,82 @@
 <html>
+  <head> </head>
 
-<head>
-    <script>
-        var poolConnection = new XMLHttpRequest();
-        poolConnection.timeout = 10000;
-        var count = 0;
-
-        var mpping = {
-            timer: 0,
-            ping: function(host, port) {
-                if (count == 3) {
-                    clearTimeout(timer);
-                }
-                var beforeConnect = new Date().getTime();
-                console.log(host, port);
-                try {
-                    poolConnection.open("GET", "http://" + host + ":" + port, true);
-                    console.log("http://" + host + ":" + port);
-                    poolConnection.send();
-                    poolConnection.onreadystatechange = function() {
-                        if (poolConnection.readyState == 4) {
-                            var firstReply = new Date().getTime();
-                            var fromUserToPool = firstReply - beforeConnect;
-                            // if (fromUserToPool < 700) {
-                            //     milliseconds = Math.round(milliseconds - milliseconds / 100 * 35)
-                            // }
-
-                            console.log(fromUserToPool);
-                            document.getElementById("pingStatistics").innerHTML = host + ":" + port + " " + fromUserToPool + "ms";
-                            count = count + 1;
-                            setTimeout(mpping.ping, 1000, host, port);
-                        }
-                    };
-                    poolConnection.ontimeout = function(e) {
-                        console.log(e);
-                    }
-
-                    poolConnection.onerror = function(e) {
-                        console.log(e);
-                    }
-                    try {
-                        poolConnection.send();
-                    } catch (e) {
-                        console.log(e);
-                    }
-                } catch (e) {}
-            }
-        }
-
-
-
-        function mppinginit() {
-            var poolAddr = document.getElementById("pooladdr").value;
-            var parser = document.createElement('a');
-            parser.href = "http://" + poolAddr;
-            mpping.ping(parser.hostname, parser.port);
-        }
-    </script>
-
-</head>
-
-<body>
-    <input id="pooladdr" type="text" name="pooladdr" value="eu1-zcash.flypool.org:3333"><br>
-    <input type="button" value="ping" onclick="mppinginit();">
+  <body>
+    <input
+      id="pooladdr"
+      type="text"
+      name="pooladdr"
+      value="eu1-zcash.flypool.org:3333"
+    /><br />
+    <input id="ping" type="button" value="ping" />
     <div>
-        <h3>ping statistics</h3>
-        <p id="pingStatistics">
-        </p>
+      <h3>ping statistics</h3>
+      <p id="pingStatistics"></p>
     </div>
 
+    <script>
+      var theTimer,
+        total = 5,
+        btn = document.getElementById("ping");
+      var poolConnection = new XMLHttpRequest();
+      poolConnection.timeout = 10000;
 
-</body>
+      btn.addEventListener(
+        "click",
+        function() {
+          var poolAddr = document.getElementById("pooladdr").value;
+          var parser = document.createElement("a");
+          parser.href = "http://" + poolAddr;
+          ping(parser.hostname, parser.port, total);
+        },
+        false
+      );
 
+      function ping(host, port, counter) {
+
+        if (counter === 0) {
+
+        clearTimeout(theTimer);
+          return;
+        }
+
+        var x = counter;
+
+        if (x > 0) {
+          var beforeConnect = new Date().getTime();
+          console.log(host, port);
+          try {
+            poolConnection.open("GET", "http://" + host + ":" + port, true);
+
+            poolConnection.onreadystatechange = function() {
+              if (poolConnection.readyState == 4) {
+                var firstReply = new Date().getTime();
+                var fromUserToPool = firstReply - beforeConnect;
+                console.log(fromUserToPool);
+                document.getElementById("pingStatistics").innerHTML =
+                  host + ":" + port + " " + fromUserToPool + "ms";
+
+                theTimer = setTimeout(function() {
+                  ping(host, port, x);
+                }, 1000);
+                x--;
+              }
+            };
+            poolConnection.ontimeout = function(e) {
+              console.log(e);
+            };
+
+            poolConnection.onerror = function(e) {
+              console.log(e);
+            };
+            try {
+              poolConnection.send();
+            } catch (e) {
+              console.log(e);
+            }
+          } catch (e) {}
+        }
+      }
+    </script>
+  </body>
 </html>
