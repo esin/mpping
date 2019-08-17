@@ -16,10 +16,10 @@
 
     <script>
       var theTimer,
-        total = 5,
-        btn = document.getElementById("ping");
-      var poolConnection = new XMLHttpRequest();
+        btn = document.getElementById("ping"),
+        poolConnection = new XMLHttpRequest();
       poolConnection.timeout = 10000;
+      var poolList = [];
 
       btn.addEventListener(
         "click",
@@ -27,16 +27,36 @@
           var poolAddr = document.getElementById("pooladdr").value;
           var parser = document.createElement("a");
           parser.href = "http://" + poolAddr;
-          ping(parser.hostname, parser.port, total);
+          var theTimer;
+          var poolParsed = {
+            hostname: parser.hostname,
+            port: parser.port,
+            pingCount: 5,
+            countTimer: theTimer,
+            TotalPacketsSent: 0,
+            TotalPacketsReceived: 0,
+            TotalTimeMin: 0,
+            TotalTimeMax: 0,
+            TotalTime: 0,
+            PoolError: ""
+          };
+          poolList.push(poolParsed);
+
+          poolList.forEach(function(pool, index) {
+            console.log("tadam");
+            ping(index);
+          });
         },
         false
       );
 
-      function ping(host, port, counter) {
-
+      function ping(index) {
+        var host = poolList[index].hostname;
+        var port = poolList[index].port;
+        var counter = poolList[index].pingCount;
+        var theTimer = poolList[index].countTimer;
         if (counter === 0) {
-
-        clearTimeout(theTimer);
+          clearTimeout(theTimer);
           return;
         }
 
@@ -57,9 +77,11 @@
                   host + ":" + port + " " + fromUserToPool + "ms";
 
                 theTimer = setTimeout(function() {
-                  ping(host, port, x);
+                  poolList[index].countTimer = theTimer;
+                  ping(index);
                 }, 1000);
                 x--;
+                poolList[index].pingCount--;
               }
             };
             poolConnection.ontimeout = function(e) {
