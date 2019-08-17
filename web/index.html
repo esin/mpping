@@ -48,47 +48,81 @@
         false
       );
 
-      function ping(index) {
-        var host = poolList[index].hostname;
-        var port = poolList[index].port;
-        var counter = poolList[index].pingCount;
-        var theTimer = poolList[index].countTimer;
+      function ping(poolID) {
+        var host = poolList[poolID].hostname;
+        var port = poolList[poolID].port;
+        var counter = poolList[poolID].pingCount;
+        var theTimer = poolList[poolID].countTimer;
         if (counter === 0) {
           clearTimeout(theTimer);
           return;
         }
-          var beforeConnect = new Date().getTime();
-          try {
-            poolConnection.open("GET", "http://" + host + ":" + port, true);
+        var beforeConnect = new Date().getTime();
+        try {
+          poolConnection.open("GET", "http://" + host + ":" + port, true);
 
-            poolConnection.onreadystatechange = function() {
-              if (poolConnection.readyState == 4) {
-                var firstReply = new Date().getTime();
-                var fromUserToPool = firstReply - beforeConnect;
-                document.getElementById("pingStatistics").innerHTML =
-                  host + ":" + port + " " + fromUserToPool + "ms";
+          poolConnection.onreadystatechange = function() {
+            if (poolConnection.readyState == 4) {
+              var firstReply = new Date().getTime();
+              var fromUserToPool = firstReply - beforeConnect;
+              poolList[poolID].TotalPacketsReceived++;
+              poolList[poolID].TotalTime += fromUserToPool;
 
-                theTimer = setTimeout(function() {
-                  poolList[index].countTimer = theTimer;
-                  ping(index);
-                }, 1000);
-                poolList[index].pingCount--;
+              if (
+                fromUserToPool < poolList[poolID].TotalTimeMin ||
+                poolList[poolID].TotalTimeMin === 0
+              ) {
+                poolList[poolID].TotalTimeMin = fromUserToPool;
               }
-            };
-            poolConnection.ontimeout = function(e) {
-              console.log(e);
-            };
 
-            poolConnection.onerror = function(e) {
-              console.log(e);
-            };
-            try {
-              poolConnection.send();
-            } catch (e) {
-              console.log(e);
+              if (
+                fromUserToPool > poolList[poolID].TotalTimeMax ||
+                poolList[poolID].TotalTimeMax === 0
+              ) {
+                poolList[poolID].TotalTimeMax = fromUserToPool;
+              }
+
+              var avgTime = 0;
+              if (poolList[poolID].TotalPacketsReceived != 0) {
+                avgTime =
+                  poolList[poolID].TotalTime /
+                  poolList[poolID].TotalPacketsReceived;
+              }
+
+              document.getElementById("pingStatistics").innerHTML =
+                host +
+                ":" +
+                port +
+                " MIN/MAX/AVG: " +
+                poolList[poolID].TotalTimeMin +
+                "ms / " +
+                poolList[poolID].TotalTimeMax +
+                "ms / " +
+                avgTime +
+                "ms";
+
+              theTimer = setTimeout(function() {
+                poolList[poolID].countTimer = theTimer;
+                ping(poolID);
+              }, 1000);
+              poolList[poolID].pingCount--;
             }
-          } catch (e) {}
-        }
+          };
+          poolConnection.ontimeout = function(e) {
+            console.log(e);
+          };
+
+          poolConnection.onerror = function(e) {
+            console.log(e);
+          };
+          try {
+            poolConnection.send();
+            poolList[poolID].TotalPacketsSent++;
+          } catch (e) {
+            console.log(e);
+          }
+        } catch (e) {}
+      }
     </script>
   </body>
 </html>
