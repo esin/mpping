@@ -15,8 +15,7 @@
     </div>
 
     <script>
-      var theTimer,
-        btn = document.getElementById("ping"),
+      var btn = document.getElementById("ping"),
         poolConnection = new XMLHttpRequest();
       poolConnection.timeout = 10000;
       var poolList = [];
@@ -43,7 +42,6 @@
           poolList.push(poolParsed);
 
           poolList.forEach(function(pool, index) {
-            console.log("tadam");
             ping(index);
           });
         },
@@ -59,12 +57,7 @@
           clearTimeout(theTimer);
           return;
         }
-
-        var x = counter;
-
-        if (x > 0) {
           var beforeConnect = new Date().getTime();
-          console.log(host, port);
           try {
             poolConnection.open("GET", "http://" + host + ":" + port, true);
 
@@ -72,7 +65,6 @@
               if (poolConnection.readyState == 4) {
                 var firstReply = new Date().getTime();
                 var fromUserToPool = firstReply - beforeConnect;
-                console.log(fromUserToPool);
                 document.getElementById("pingStatistics").innerHTML =
                   host + ":" + port + " " + fromUserToPool + "ms";
 
@@ -80,7 +72,6 @@
                   poolList[index].countTimer = theTimer;
                   ping(index);
                 }, 1000);
-                x--;
                 poolList[index].pingCount--;
               }
             };
@@ -98,7 +89,6 @@
             }
           } catch (e) {}
         }
-      }
     </script>
   </body>
 </html>
