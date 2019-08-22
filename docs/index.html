@@ -24,11 +24,9 @@
             try {
                 const resp = await fetch("https://66q7gzyjbf.execute-api.eu-west-1.amazonaws.com/v1/destination/?pooladdr=" + poolAddr);
                 resp.json().then(function(data) {
-                    //console.log(data);
                     poolList[index].Destination = data.ipaddresses[0].dest;
+                    poolList[index].Country = data.ipaddresses[0].country;
                 });
-
-                //return resp.json();
             } catch (err) {
                 console.log(err)
             }
@@ -52,7 +50,8 @@
                     TotalTimeMax: 0,
                     TotalTime: 0,
                     PoolError: "",
-                    Destination: -1
+                    Destination: -1,
+                    Country: ""
                 };
                 poolList.push(poolParsed);
 
@@ -117,15 +116,11 @@
                             host +
                             ":" +
                             port +
-                            " MIN/MAX/AVG: " +
-                            poolList[poolID].TotalTimeMin +
-                            "ms / " +
-                            poolList[poolID].TotalTimeMax +
-                            "ms / " +
-                            avgTime +
-                            "ms " +
-                            poolList[poolID].Destination +
-                            "km.";
+                            " MIN/MAX/AVG: " + poolList[poolID].TotalTimeMin +
+                            "ms / " + poolList[poolID].TotalTimeMax +
+                            "ms / " + avgTime + "ms " +
+                            "Destination: " + poolList[poolID].Destination + "km. " +
+                            "Country: " + poolList[poolID].Country;
 
                         theTimer = setTimeout(function() {
                             poolList[poolID].countTimer = theTimer;
