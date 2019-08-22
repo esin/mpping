@@ -5,6 +5,7 @@
 </head>
 
 <body>
+    <p>pools for test: eu.zec.slushpool.com:4444 us-east.zec.slushpool.com:4444 cn.zec.slushpool.com:4444 grin29-us.f2pool.com:13654 grin29.f2pool.com:13654</p>
     <input id="pooladdr" type="text" name="pooladdr" value="eu1-zcash.flypool.org:3333" /><br />
     <input id="ping" type="button" value="ping" />
     <div>
@@ -13,18 +14,6 @@
     </div>
 
     <script>
-        // function getDestination(poolAddr) {
-        //     const url = "https://66q7gzyjbf.execute-api.eu-west-1.amazonaws.com/v1/destination/?pooladdr=" + poolAddr;
-        //     fetch(url)
-        //         .then(
-        //             response => {
-        //                 console.log(html);
-        //                 return response.json();
-        //             }
-        //         );
-        // }
-
-
         var btn = document.getElementById("ping"),
             poolConnection = new XMLHttpRequest();
         poolConnection.timeout = 10000;
