@@ -26,6 +26,7 @@
                 resp.json().then(function(data) {
                     poolList[index].Destination = data.ipaddresses[0].dest;
                     poolList[index].Country = data.ipaddresses[0].country;
+                    poolList[index].FlagURL32 = data.ipaddresses[0].flagurl32;
                 });
             } catch (err) {
                 console.log(err)
@@ -51,7 +52,8 @@
                     TotalTime: 0,
                     PoolError: "",
                     Destination: -1,
-                    Country: ""
+                    Country: "",
+                    FlagURL32: ""
                 };
                 poolList.push(poolParsed);
 
@@ -120,7 +122,7 @@
                             "ms / " + poolList[poolID].TotalTimeMax +
                             "ms / " + avgTime + "ms " +
                             "Destination: " + poolList[poolID].Destination + "km. " +
-                            "Country: " + poolList[poolID].Country;
+                            "Country: " + poolList[poolID].Country + " " + "<img src=" + poolList[poolID].FlagURL32 + " alt=" + poolList[poolID].Country + " height=16px>" ;
 
                         theTimer = setTimeout(function() {
                             poolList[poolID].countTimer = theTimer;
