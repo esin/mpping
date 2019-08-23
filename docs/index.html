@@ -60,11 +60,7 @@
                 poolList.forEach(function(pool, index) {
                     if (poolList[index].Destination == -1) {
                         poolList[index].Destination = -2
-                            //console.log(getDestination(poolList[index].hostname));
-                            //var dest;
-                            //dest = 
                         getDestination(poolList[index].hostname, index);
-                        //poolList[index].Destination = dest; //.ipaddresses[0].dest;
                     }
                     ping(index);
                 });
@@ -85,7 +81,6 @@
             try {
                 var proto = location.protocol == "https:" ? "https" : "http";
                 poolConnection.open("GET", proto + "://" + host + ":" + port, true);
-                console.log(poolList[poolID].Destination)
                 poolConnection.onreadystatechange = function() {
                     if (poolConnection.readyState == 4) {
                         var firstReply = new Date().getTime();
