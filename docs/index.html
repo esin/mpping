@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
-    <meta content="width=600" name="viewport" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>MPPing :: MiningPool (ₜᵣᵤₑ)Ping utility</title>
     <link
       href="https://assets.onfido.com/web-sdk-releases/4.0.0/style.css"
@@ -18,9 +18,9 @@
 
   <body>
     <p>
-      pools for test: eu.zec.slushpool.com:4444 us-east.zec.slushpool.com:4444
-      cn.zec.slushpool.com:4444 grin29-us.f2pool.com:13654
-      grin29.f2pool.com:13654
+      pools for testing: eu.zec.slushpool.com:4444
+      us-east.zec.slushpool.com:4444 cn.zec.slushpool.com:4444
+      grin29-us.f2pool.com:13654 grin29.f2pool.com:13654
     </p>
     <input
       id="pooladdr"
@@ -29,8 +29,16 @@
       spellcheck="false"
       placeholder="Enter pool address"
     /><br />
-    <input id="ping" type="button" value="ping" />
-
+    <!-- <input id="ping" type="button" value="ping" /> -->
+    <button
+      id="ping"
+      type="submit"
+      class="Button Button--blue Button--large Button--fullWidth"
+    >
+      <!---->
+      <span class="Button--text">Ping</span>
+      <!---->
+    </button>
 
     <div class="small-12 columns">
       <h2>Ping statistics</h2>
@@ -38,8 +46,7 @@
       <table class="domains--list">
         <thead>
           <tr>
-            <th
-              id="ember2696" class="aurora-th ember-view">
+            <th id="ember2696" class="aurora-th ember-view">
               <span class="headerText">Poolname</span>
               <!---->
             </th>
@@ -48,9 +55,9 @@
               <!---->
             </th>
             <th id="ember2698" class="aurora-th ember-view">
-                    <span class="headerText">Destination</span>
-                    <!---->
-                  </th>
+              <span class="headerText">Destination</span>
+              <!---->
+            </th>
             <th id="ember2698" class="aurora-th ember-view">
               <span class="headerText">Country</span>
               <!---->
@@ -60,35 +67,34 @@
         <tbody>
           <tr>
             <td>
-                <!----><!---->
-                <div class="Resource-meta   ">
-                  <!-- <div
+              <!----><!---->
+              <!-- <div class="Resource-meta   "> -->
+                <!-- <div
                     role="button"
                     class="Resource-title u-mb-0 has-link "
                     data-ember-action=""
                     data-ember-action-2703="2703"
                   > -->
-                    <!-- <a
+                <!-- <a
                       href="/networking/domains/coinfly.cc?i=0421c2"
                       id="ember2704"
                       class="ember-view"
                       >coinfly.cc</a
                     > -->
 
+                <span id="poolName"></span>
+              <!-- </div> -->
 
-                    <span id="poolName"></span>
-                  </div>
-                  
-                  <!-- <div class="Resource-meta-wrap">
+              <!-- <div class="Resource-meta-wrap">
                     <div class="Resource-description">
                       13 A / 15 CNAME / 5 MX / 3 NS / 4 TXT
                     </div>
                   </div> -->
 
-                </div>
-              </div>
+              <!-- </div> -->
+              <!-- </div> -->
             </td>
-            
+
             <td>
               <!-- <div id="ember2706" class="ellipsis-text ember-view">
                 multiple locations
@@ -96,19 +102,19 @@
               <span id="poolTTL"></span>
             </td>
             <td>
-                    <!-- <div id="ember2706" class="ellipsis-text ember-view">
+              <!-- <div id="ember2706" class="ellipsis-text ember-view">
                       multiple locations
                     </div> -->
-                    <span id="poolDestination"></span>
-                  </td>
+              <span id="poolDestination"></span>
+            </td>
 
             <td>
-                    <!-- <div id="ember2706" class="ellipsis-text ember-view">
+              <!-- <div id="ember2706" class="ellipsis-text ember-view">
                       multiple locations
                     </div> -->
-                    <span id="poolCountry"></span>
-                  </td>
-<!-- 
+              <span id="poolCountry"></span>
+            </td>
+            <!-- 
             <td class="u-textAlignRight">
               <div
                 id="ember2707"
@@ -125,10 +131,7 @@
 
               </div>
             </td> -->
-
-            
           </tr>
-
         </tbody>
       </table>
       <!---->
@@ -225,6 +228,8 @@
                 poolList[poolID].TotalTimeMax = fromUserToPool;
               }
 
+              document.getElementById("poolName").innerHTML = host;
+
               var avgTime = 0;
               if (poolList[poolID].TotalPacketsReceived != 0) {
                 avgTime =
@@ -232,24 +237,34 @@
                   poolList[poolID].TotalPacketsReceived;
               }
 
-              document.getElementById("poolName").innerHTML = host
+              if (avgTime > 1) {
+                avgTime = Math.round(avgTime);
+              }
+
+              var totalMin, totalMax;
+              totalMin = poolList[poolID].TotalTimeMin;
+              if (totalMin > 1) {
+                totalMin = Math.round(totalMin);
+              }
+
+              totalMax = poolList[poolID].TotalTimeMax;
+              if (totalMax > 1) {
+                totalMax = Math.round(totalMax);
+              }
 
               document.getElementById("poolTTL").innerHTML =
-    
                 " MIN/MAX/AVG: " +
-                poolList[poolID].TotalTimeMin +
-                "ms / " +
-                poolList[poolID].TotalTimeMax +
-                "ms / " +
+                totalMin +
+                " ms / " +
+                totalMax +
+                " ms / " +
                 avgTime +
-                "ms ";
-                
-                document.getElementById("poolDestination").innerHTML =
-            
-                poolList[poolID].Destination +
-                "km. ";
-                document.getElementById("poolCountry").innerHTML =
-                
+                " ms";
+
+              document.getElementById("poolDestination").innerHTML =
+                Math.round(poolList[poolID].Destination) + " km. ";
+
+              document.getElementById("poolCountry").innerHTML =
                 poolList[poolID].Country +
                 " " +
                 "<img src=" +
