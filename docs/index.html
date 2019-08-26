@@ -69,25 +69,25 @@
             <td>
               <!----><!---->
               <!-- <div class="Resource-meta   "> -->
-                <!-- <div
+              <!-- <div
                     role="button"
                     class="Resource-title u-mb-0 has-link "
                     data-ember-action=""
                     data-ember-action-2703="2703"
                   > -->
-                <!-- <a
+              <!-- <a
                       href="/networking/domains/coinfly.cc?i=0421c2"
                       id="ember2704"
                       class="ember-view"
                       >coinfly.cc</a
                     > -->
 
-                <span id="poolName"></span>
+              <span id="poolName"></span>
               <!-- </div> -->
 
-                    <div id="poolIPs" class="Resource-meta-wrap Resource-description">
-                      
-                    </div>
+              <div id="poolIPs" class="Resource-meta-wrap Resource-description">
+                <!-- Pool IPs:  -->
+              </div>
 
               <!-- </div> -->
               <!-- </div> -->
@@ -141,7 +141,7 @@
       poolConnection.timeout = 10000;
       var poolList = [];
 
-      async function getDestination(poolAddr, index) {
+      async function getPoolExtInfo(poolAddr, index) {
         try {
           const resp = await fetch(
             "https://66q7gzyjbf.execute-api.eu-west-1.amazonaws.com/v1/destination/?pooladdr=" +
@@ -151,6 +151,8 @@
             poolList[index].Destination = data.ipaddresses[0].dest;
             poolList[index].Country = data.ipaddresses[0].country;
             poolList[index].FlagURL32 = data.ipaddresses[0].flagurl32;
+            poolList[index].PoolExtInfo = data;
+            //console.log(poolList[index]);
           });
         } catch (err) {
           console.log(err);
@@ -177,14 +179,15 @@
             PoolError: "",
             Destination: -1,
             Country: "",
-            FlagURL32: ""
+            FlagURL32: "",
+            PoolExtInfo: ""
           };
           poolList.push(poolParsed);
 
           poolList.forEach(function(pool, index) {
             if (poolList[index].Destination == -1) {
               poolList[index].Destination = -2;
-              getDestination(poolList[index].hostname, index);
+              getPoolExtInfo(poolList[index].hostname, index);
             }
             ping(index);
           });
@@ -227,6 +230,15 @@
               }
 
               document.getElementById("poolName").innerHTML = host;
+
+              var poolIPs = "Pool IPs: ";
+              if (Array.isArray(poolList[poolID].PoolExtInfo.ipaddresses)) {
+                poolList[poolID].PoolExtInfo.ipaddresses.forEach(function(val) {
+                  poolIPs = poolIPs + " " + val.ip;
+                });
+              }
+
+              document.getElementById("poolIPs").innerHTML = poolIPs;
 
               var avgTime = 0;
               if (poolList[poolID].TotalPacketsReceived != 0) {
