@@ -5,43 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>MPPing :: MiningPool (ₜᵣᵤₑ)Ping utility</title>
     <link
-      href="https://assets.onfido.com/web-sdk-releases/4.0.0/style.css"
-      type="text/css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cloud-cdn-digitalocean-com.global.ssl.fastly.net/aurora/assets/aurora-117e8ec911c34d2a1f102c0ab792fd89.css"
+      href="aurora-117e8ec911c34d2a1f102c0ab792fd89.css"
       type="text/css"
       rel="stylesheet"
     />
   </head>
 
   <body>
+    <br /><br /><br />
     <p>
       pools for testing: eu.zec.slushpool.com:4444
       us-east.zec.slushpool.com:4444 cn.zec.slushpool.com:4444
       grin29-us.f2pool.com:13654 grin29.f2pool.com:13654
     </p>
-    <input
-      id="pooladdr"
-      type="text"
-      name="pooladdr"
-      spellcheck="false"
-      placeholder="Enter pool address"
-    /><br />
-    <!-- <input id="ping" type="button" value="ping" /> -->
-    <button
-      id="ping"
-      type="submit"
-      class="Button Button--blue Button--large Button--fullWidth"
-    >
-      <!---->
-      <span class="Button--text">Ping</span>
-      <!---->
-    </button>
+    <br /><br />
+    <div id="mainDiv" class="small-12" style="text-align: center">
+      <input
+        id="pooladdr"
+        type="text"
+        name="pooladdr"
+        spellcheck="false"
+        placeholder="Enter pool address"
+      />
+      <!-- <input id="ping" type="button" value="ping" /> -->
+      <button
+        id="ping"
+        type="submit"
+        class="Button Button--blue Button--large "
+      >
+        <!---->
+        <span class="Button--text">+</span>
+        <!---->
+      </button>
+    </div>
 
+    <br>
     <div class="small-12 columns">
-      <h2>Ping statistics</h2>
+      <h2 style="text-align: center">Ping statistics</h2>
       <!---->
       <table class="domains--list">
         <thead>
