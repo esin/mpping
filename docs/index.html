@@ -39,7 +39,7 @@
       </button>
     </div>
 
-    <br>
+    <br />
     <div class="small-12 columns">
       <h2 style="text-align: center">Ping statistics</h2>
       <!---->
@@ -137,9 +137,12 @@
 
     <script>
       var btn = document.getElementById("ping"),
+        poolAddrEdit = document.getElementById("pooladdr"),
         poolConnection = new XMLHttpRequest();
       poolConnection.timeout = 10000;
       var poolList = [];
+
+      btn.setAttribute("disabled", "true");
 
       async function getPoolExtInfo(poolAddr, index) {
         try {
@@ -158,6 +161,19 @@
           console.log(err);
         }
       }
+
+      poolAddrEdit.addEventListener("keyup", function() {
+        var poolAddr = document.getElementById("pooladdr").value;
+        //(stratum[s]?:\/\/)?
+
+        var re = new RegExp("^([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.){1,}(?:[a-zA-Z]{2,})+$");
+        if (re.test(poolAddr)) {
+          btn.removeAttribute("disabled");
+          console.log('here');
+        } else {
+          btn.setAttribute("disabled", "true");
+        }
+      });
 
       btn.addEventListener(
         "click",
