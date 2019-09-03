@@ -1,326 +1,257 @@
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>MPPing :: MiningPool (ₜᵣᵤₑ)Ping utility</title>
-    <link
-      href="aurora-117e8ec911c34d2a1f102c0ab792fd89.css"
-      type="text/css"
-      rel="stylesheet"
-    />
-  </head>
+    <link href="aurora-117e8ec911c34d2a1f102c0ab792fd89.css" type="text/css" rel="stylesheet" />
+</head>
 
-  <body>
+<body>
     <br /><br /><br />
     <p>
-      pools for testing: eu.zec.slushpool.com:4444
-      us-east.zec.slushpool.com:4444 cn.zec.slushpool.com:4444
-      grin29-us.f2pool.com:13654 grin29.f2pool.com:13654
+        pools for testing: eu.zec.slushpool.com:4444 us-east.zec.slushpool.com:4444 cn.zec.slushpool.com:4444 grin29-us.f2pool.com:13654 grin29.f2pool.com:13654
     </p>
     <br /><br />
     <div id="mainDiv" class="small-12" style="text-align: center">
-      <input
-        id="pooladdr"
-        type="text"
-        name="pooladdr"
-        spellcheck="false"
-        placeholder="Enter pool address"
-      />
-      <!-- <input id="ping" type="button" value="ping" /> -->
-      <button
-        id="ping"
-        type="submit"
-        class="Button Button--blue Button--large "
-      >
-        <!---->
+        <input id="pooladdr" type="text" name="pooladdr" spellcheck="false" placeholder="Enter pool address" />
+        <button id="ping" type="submit" class="Button Button--blue Button--large ">
         <span class="Button--text">+</span>
-        <!---->
       </button>
     </div>
 
     <br />
     <div class="small-12 columns">
-      <h2 style="text-align: center">Ping statistics</h2>
-      <!---->
-      <table class="domains--list">
-        <thead>
-          <tr>
-            <th id="ember2696" class="aurora-th ember-view">
-              <span class="headerText">Poolname</span>
-              <!---->
-            </th>
-            <th id="ember2697" class="aurora-th ember-view">
-              <span class="headerText">TTL</span>
-              <!---->
-            </th>
-            <th id="ember2698" class="aurora-th ember-view">
-              <span class="headerText">Destination</span>
-              <!---->
-            </th>
-            <th id="ember2698" class="aurora-th ember-view">
-              <span class="headerText">Country</span>
-              <!---->
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <!----><!---->
-              <!-- <div class="Resource-meta   "> -->
-              <!-- <div
-                    role="button"
-                    class="Resource-title u-mb-0 has-link "
-                    data-ember-action=""
-                    data-ember-action-2703="2703"
-                  > -->
-              <!-- <a
-                      href="/networking/domains/coinfly.cc?i=0421c2"
-                      id="ember2704"
-                      class="ember-view"
-                      >coinfly.cc</a
-                    > -->
+        <h2 style="text-align: center">Ping statistics</h2>
+        <table class="domains--list">
+            <thead>
+                <tr>
+                    <th id="ember2696" class="aurora-th ember-view">
+                        <span class="headerText">Poolname</span>
+                    </th>
+                    <th id="ember2697" class="aurora-th ember-view">
+                        <span class="headerText">TTL</span>
+                    </th>
+                    <th id="ember2698" class="aurora-th ember-view">
+                        <span class="headerText">Destination</span>
+                    </th>
+                    <th id="ember2698" class="aurora-th ember-view">
+                        <span class="headerText">Country</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span id="poolName"></span>
 
-              <span id="poolName"></span>
-              <!-- </div> -->
+                        <div id="poolIPs" class="Resource-meta-wrap Resource-description">
 
-              <div id="poolIPs" class="Resource-meta-wrap Resource-description">
-                <!-- Pool IPs:  -->
-              </div>
+                        </div>
+                    </td>
 
-              <!-- </div> -->
-              <!-- </div> -->
-            </td>
+                    <td>
+                        <span id="poolTTL"></span>
+                    </td>
+                    <td>
+                        <span id="poolDestination"></span>
+                    </td>
 
-            <td>
-              <!-- <div id="ember2706" class="ellipsis-text ember-view">
-                multiple locations
-              </div> -->
-              <span id="poolTTL"></span>
-            </td>
-            <td>
-              <!-- <div id="ember2706" class="ellipsis-text ember-view">
-                      multiple locations
-                    </div> -->
-              <span id="poolDestination"></span>
-            </td>
-
-            <td>
-              <!-- <div id="ember2706" class="ellipsis-text ember-view">
-                      multiple locations
-                    </div> -->
-              <span id="poolCountry"></span>
-            </td>
-            <!-- 
-            <td class="u-textAlignRight">
-              <div
-                id="ember2707"
-                class="aurora-dropdown-menu u-floatRight ember-view"
-              >
-                <span
-                  role="button"
-                  class="dropdown-title  "
-                  data-ember-action=""
-                  data-ember-action-2708="2708"
-                  >More
-                  <span class="Icon--arrowDown"></span>
-                </span>
-
-              </div>
-            </td> -->
-          </tr>
-        </tbody>
-      </table>
-      <!---->
+                    <td>
+                        <span id="poolCountry"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <script>
-      var btn = document.getElementById("ping"),
-        poolAddrEdit = document.getElementById("pooladdr"),
-        poolConnection = new XMLHttpRequest();
-      poolConnection.timeout = 10000;
-      var poolList = [];
+        var btn = document.getElementById("ping"),
+            poolAddrEdit = document.getElementById("pooladdr"),
+            poolConnection = new XMLHttpRequest();
+        poolConnection.timeout = 10000;
+        var poolList = [];
 
-      btn.setAttribute("disabled", "true");
+        btn.setAttribute("disabled", "true");
 
-      async function getPoolExtInfo(poolAddr, index) {
-        try {
-          const resp = await fetch(
-            "https://66q7gzyjbf.execute-api.eu-west-1.amazonaws.com/v1/destination/?pooladdr=" +
-              poolAddr
-          );
-          resp.json().then(function(data) {
-            poolList[index].Destination = data.ipaddresses[0].dest;
-            poolList[index].Country = data.ipaddresses[0].country;
-            poolList[index].FlagURL32 = data.ipaddresses[0].flagurl32;
-            poolList[index].PoolExtInfo = data;
-            //console.log(poolList[index]);
-          });
-        } catch (err) {
-          console.log(err);
-        }
-      }
-
-      poolAddrEdit.addEventListener("keyup", function() {
-        var poolAddr = document.getElementById("pooladdr").value;
-        //(stratum[s]?:\/\/)?
-
-        var re = new RegExp("^(stratum:\/\/)?([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.){1,}(?:[a-zA-Z]{2,})(\:([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]))+$");
-        if (re.test(poolAddr)) {
-          btn.removeAttribute("disabled");
-          console.log('here');
-        } else {
-          btn.setAttribute("disabled", "true");
-        }
-      });
-
-      btn.addEventListener(
-        "click",
-        function() {
-          var poolAddr = document.getElementById("pooladdr").value;
-          var parser = document.createElement("a");
-          parser.href = "http://" + poolAddr;
-          var theTimer;
-          var poolParsed = {
-            hostname: parser.hostname,
-            port: parser.port,
-            pingCount: 5,
-            countTimer: theTimer,
-            TotalPacketsSent: 0,
-            TotalPacketsReceived: 0,
-            TotalTimeMin: 0,
-            TotalTimeMax: 0,
-            TotalTime: 0,
-            PoolError: "",
-            Destination: -1,
-            Country: "",
-            FlagURL32: "",
-            PoolExtInfo: ""
-          };
-          poolList.push(poolParsed);
-
-          poolList.forEach(function(pool, index) {
-            if (poolList[index].Destination == -1) {
-              poolList[index].Destination = -2;
-              getPoolExtInfo(poolList[index].hostname, index);
-            }
-            ping(index);
-          });
-        },
-        false
-      );
-
-      function ping(poolID) {
-        var host = poolList[poolID].hostname;
-        var port = poolList[poolID].port;
-        var counter = poolList[poolID].pingCount;
-        var theTimer = poolList[poolID].countTimer;
-        if (counter === 0) {
-          clearTimeout(theTimer);
-          return;
-        }
-        var beforeConnect = new Date().getTime();
-        try {
-          var proto = location.protocol == "https:" ? "https" : "http";
-          poolConnection.open("GET", proto + "://" + host + ":" + port, true);
-          poolConnection.onreadystatechange = function() {
-            if (poolConnection.readyState == 4) {
-              var firstReply = new Date().getTime();
-              var fromUserToPool = firstReply - beforeConnect;
-              poolList[poolID].TotalPacketsReceived++;
-              poolList[poolID].TotalTime += fromUserToPool;
-
-              if (
-                fromUserToPool < poolList[poolID].TotalTimeMin ||
-                poolList[poolID].TotalTimeMin === 0
-              ) {
-                poolList[poolID].TotalTimeMin = fromUserToPool;
-              }
-
-              if (
-                fromUserToPool > poolList[poolID].TotalTimeMax ||
-                poolList[poolID].TotalTimeMax === 0
-              ) {
-                poolList[poolID].TotalTimeMax = fromUserToPool;
-              }
-
-              document.getElementById("poolName").innerHTML = host;
-
-              var poolIPs = "Pool IPs: ";
-              if (Array.isArray(poolList[poolID].PoolExtInfo.ipaddresses)) {
-                poolList[poolID].PoolExtInfo.ipaddresses.forEach(function(val) {
-                  poolIPs = poolIPs + " " + val.ip;
+        async function getPoolExtInfo(poolAddr, index) {
+            try {
+                const resp = await fetch(
+                    "https://66q7gzyjbf.execute-api.eu-west-1.amazonaws.com/v1/destination/?pooladdr=" +
+                    poolAddr
+                );
+                resp.json().then(function(data) {
+                    poolList[index].Destination = data.ipaddresses[0].dest;
+                    poolList[index].Country = data.ipaddresses[0].country;
+                    poolList[index].FlagURL32 = data.ipaddresses[0].flagurl32;
+                    poolList[index].PoolExtInfo = data;
                 });
-              }
-
-              document.getElementById("poolIPs").innerHTML = poolIPs;
-
-              var avgTime = 0;
-              if (poolList[poolID].TotalPacketsReceived != 0) {
-                avgTime =
-                  poolList[poolID].TotalTime /
-                  poolList[poolID].TotalPacketsReceived;
-              }
-
-              if (avgTime > 1) {
-                avgTime = Math.round(avgTime);
-              }
-
-              var totalMin, totalMax;
-              totalMin = poolList[poolID].TotalTimeMin;
-              if (totalMin > 1) {
-                totalMin = Math.round(totalMin);
-              }
-
-              totalMax = poolList[poolID].TotalTimeMax;
-              if (totalMax > 1) {
-                totalMax = Math.round(totalMax);
-              }
-
-              document.getElementById("poolTTL").innerHTML =
-                " MIN/MAX/AVG: " +
-                totalMin +
-                " ms / " +
-                totalMax +
-                " ms / " +
-                avgTime +
-                " ms";
-
-              document.getElementById("poolDestination").innerHTML =
-                Math.round(poolList[poolID].Destination) + " km. ";
-
-              document.getElementById("poolCountry").innerHTML =
-                poolList[poolID].Country +
-                " " +
-                "<img src=" +
-                poolList[poolID].FlagURL32 +
-                " alt=" +
-                poolList[poolID].Country +
-                " height=16px>";
-
-              theTimer = setTimeout(function() {
-                poolList[poolID].countTimer = theTimer;
-                ping(poolID);
-              }, 1000);
-              poolList[poolID].pingCount--;
+            } catch (err) {
+                console.log(err);
             }
-          };
-          poolConnection.ontimeout = function(e) {
-            console.log(e);
-          };
+        }
 
-          poolConnection.onerror = function(e) {
-            console.log(e);
-          };
-          try {
-            poolConnection.send();
-            poolList[poolID].TotalPacketsSent++;
-          } catch (e) {
-            console.log(e);
-          }
-        } catch (e) {}
-      }
+        poolAddrEdit.addEventListener("keyup", function() {
+            var poolAddr = document.getElementById("pooladdr").value;
+            //(stratum[s]?:\/\/)?
+
+            var re = new RegExp("^(stratum:\/\/)?([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.){1,}(?:[a-zA-Z]{2,})(\:([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]))+$");
+            if (re.test(poolAddr)) {
+                btn.removeAttribute("disabled");
+                console.log('here');
+            } else {
+                btn.setAttribute("disabled", "true");
+            }
+        });
+
+        btn.addEventListener(
+            "click",
+            function() {
+                var poolAddr = document.getElementById("pooladdr").value;
+                var parser = document.createElement("a");
+                parser.href = "http://" + poolAddr;
+                var theTimer;
+                var poolParsed = {
+                    hostname: parser.hostname,
+                    port: parser.port,
+                    pingCount: 5,
+                    countTimer: theTimer,
+                    TotalPacketsSent: 0,
+                    TotalPacketsReceived: 0,
+                    TotalTimeMin: 0,
+                    TotalTimeMax: 0,
+                    TotalTime: 0,
+                    PoolError: "",
+                    Destination: -1,
+                    Country: "",
+                    FlagURL32: "",
+                    PoolExtInfo: ""
+                };
+                poolList.push(poolParsed);
+
+                poolList.forEach(function(pool, index) {
+                    if (poolList[index].Destination == -1) {
+                        poolList[index].Destination = -2;
+                        getPoolExtInfo(poolList[index].hostname, index);
+                    }
+                    ping(index);
+                });
+            },
+            false
+        );
+
+        function ping(poolID) {
+            var host = poolList[poolID].hostname;
+            var port = poolList[poolID].port;
+            var counter = poolList[poolID].pingCount;
+            var theTimer = poolList[poolID].countTimer;
+            if (counter === 0) {
+                clearTimeout(theTimer);
+                return;
+            }
+            var beforeConnect = new Date().getTime();
+            try {
+                var proto = location.protocol == "https:" ? "https" : "http";
+                poolConnection.open("GET", proto + "://" + host + ":" + port, true);
+                poolConnection.onreadystatechange = function() {
+                    if (poolConnection.readyState == 4) {
+                        var firstReply = new Date().getTime();
+                        var fromUserToPool = firstReply - beforeConnect;
+                        poolList[poolID].TotalPacketsReceived++;
+                        poolList[poolID].TotalTime += fromUserToPool;
+
+                        if (
+                            fromUserToPool < poolList[poolID].TotalTimeMin ||
+                            poolList[poolID].TotalTimeMin === 0
+                        ) {
+                            poolList[poolID].TotalTimeMin = fromUserToPool;
+                        }
+
+                        if (
+                            fromUserToPool > poolList[poolID].TotalTimeMax ||
+                            poolList[poolID].TotalTimeMax === 0
+                        ) {
+                            poolList[poolID].TotalTimeMax = fromUserToPool;
+                        }
+
+                        document.getElementById("poolName").innerHTML = host;
+
+                        var poolIPs = "Pool IPs: ";
+                        if (Array.isArray(poolList[poolID].PoolExtInfo.ipaddresses)) {
+                            poolList[poolID].PoolExtInfo.ipaddresses.forEach(function(val) {
+                                poolIPs = poolIPs + " " + val.ip;
+                            });
+                        }
+
+                        document.getElementById("poolIPs").innerHTML = poolIPs;
+
+                        var avgTime = 0;
+                        if (poolList[poolID].TotalPacketsReceived != 0) {
+                            avgTime =
+                                poolList[poolID].TotalTime /
+                                poolList[poolID].TotalPacketsReceived;
+                        }
+
+                        if (avgTime > 1) {
+                            avgTime = Math.round(avgTime);
+                        }
+
+                        var totalMin, totalMax;
+                        totalMin = poolList[poolID].TotalTimeMin;
+                        if (totalMin > 1) {
+                            totalMin = Math.round(totalMin);
+                        }
+
+                        totalMax = poolList[poolID].TotalTimeMax;
+                        if (totalMax > 1) {
+                            totalMax = Math.round(totalMax);
+                        }
+
+                        document.getElementById("poolTTL").innerHTML =
+                            " MIN/MAX/AVG: " +
+                            totalMin +
+                            " ms / " +
+                            totalMax +
+                            " ms / " +
+                            avgTime +
+                            " ms";
+
+                        document.getElementById("poolDestination").innerHTML =
+                            Math.round(poolList[poolID].Destination) + " km. ";
+
+                        document.getElementById("poolCountry").innerHTML =
+                            poolList[poolID].Country +
+                            " " +
+                            "<img src=" +
+                            poolList[poolID].FlagURL32 +
+                            " alt=" +
+                            poolList[poolID].Country +
+                            " height=16px>";
+
+                        theTimer = setTimeout(function() {
+                            poolList[poolID].countTimer = theTimer;
+                            ping(poolID);
+                        }, 1000);
+                        poolList[poolID].pingCount--;
+                    }
+                };
+                poolConnection.ontimeout = function(e) {
+                    console.log(e);
+                };
+
+                poolConnection.onerror = function(e) {
+                    console.log(e);
+                };
+                try {
+                    poolConnection.send();
+                    poolList[poolID].TotalPacketsSent++;
+                } catch (e) {
+                    console.log(e);
+                }
+            } catch (e) {}
+        }
     </script>
-  </body>
+</body>
+
 </html>
