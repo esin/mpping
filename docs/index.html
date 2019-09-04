@@ -5,16 +5,128 @@
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>MPPing :: MiningPool (ₜᵣᵤₑ)Ping utility</title>
-    <link href="aurora-117e8ec911c34d2a1f102c0ab792fd89.css" type="text/css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: "Lucida Console", Monaco, monospace;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        .column {
+            float: left;
+            width: 16%;
+            padding: 0 10px;
+        }
+        
+        .row {
+            margin: 0 -5px;
+        }
+        
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            /* this adds the "card" effect */
+            padding: 16px;
+            text-align: left;
+            background-color: #f1f1f1;
+        }
+        /* Responsive columns - one column layout (vertical) on small screens */
+        
+        @media screen and (max-width: 600px) {
+            .column {
+                width: 100%;
+                display: block;
+                margin-bottom: 20px;
+            }
+        }
+        
+        div.pingStatistics {
+            border: 1px solid #AAAAAA;
+            width: 30%;
+            text-align: left;
+            border-collapse: collapse;
+        }
+        
+        .divTable.pingStatistics .divTableCell,
+        .divTable.pingStatistics .divTableHead {
+            border: 0px solid #AAAAAA;
+        }
+        
+        .divTable.pingStatistics .divTableBody .divTableCell {
+            font-size: 13px;
+        }
+        
+        .pingStatistics .tableFootStyle {
+            font-size: 14px;
+        }
+        
+        .pingStatistics .tableFootStyle .links {
+            text-align: right;
+        }
+        
+        .pingStatistics .tableFootStyle .links a {
+            display: inline-block;
+            background: #1C6EA4;
+            color: #FFFFFF;
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+        
+        .pingStatistics.outerTableFooter {
+            border-top: none;
+        }
+        
+        .pingStatistics.outerTableFooter .tableFootStyle {
+            padding: 3px 5px;
+        }
+        
+        .divTable {
+            display: table;
+        }
+        
+        .divTableRow {
+            display: table-row;
+        }
+        
+        .divTableHeading {
+            display: table-header-group;
+        }
+        
+        .divTableCell,
+        .divTableHead {
+            display: table-cell;
+        }
+        
+        .divTableHeading {
+            display: table-header-group;
+        }
+        
+        .divTableFoot {
+            display: table-footer-group;
+        }
+        
+        .divTableBody {
+            display: table-row-group;
+        }
+    </style>
+
 </head>
 
 <body>
-    <br /><br /><br />
+    <br /><br /> <br />
     <p>
         pools for testing: eu.zec.slushpool.com:4444 us-east.zec.slushpool.com:4444 cn.zec.slushpool.com:4444 grin29-us.f2pool.com:13654 grin29.f2pool.com:13654
     </p>
     <br /><br />
-    <div id="mainDiv" class="small-12" style="text-align: center">
+    <div id="mainDiv" style="text-align: center">
         <input id="pooladdr" type="text" name="pooladdr" spellcheck="false" placeholder="Enter pool address" />
         <button id="ping" type="submit" class="Button Button--blue Button--large ">
         <span class="Button--text">+</span>
@@ -22,49 +134,41 @@
     </div>
 
     <br />
-    <div class="small-12 columns">
-        <h2 style="text-align: center">Ping statistics</h2>
-        <table class="domains--list">
-            <thead>
-                <tr>
-                    <th id="ember2696" class="aurora-th ember-view">
-                        <span class="headerText">Poolname</span>
-                    </th>
-                    <th id="ember2697" class="aurora-th ember-view">
-                        <span class="headerText">TTL</span>
-                    </th>
-                    <th id="ember2698" class="aurora-th ember-view">
-                        <span class="headerText">Destination</span>
-                    </th>
-                    <th id="ember2698" class="aurora-th ember-view">
-                        <span class="headerText">Country</span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <span id="poolName"></span>
 
-                        <div id="poolIPs" class="Resource-meta-wrap Resource-description">
 
-                        </div>
-                    </td>
+    <div class="row">
+        <div class="column">
+            <div class="card">
+                <div class="divTableRow">
+                    <div class="divTableCell">Pool address</div>
+                    <div class="divTableCell">1</div>
+                </div>
+                <div class="divTableRow">
+                    <div class="divTableCell">Average RTT</div>
+                    <div class="divTableCell">100</div>
+                </div>
+                <div class="divTableRow">
+                    <div class="divTableCell">Min RTT</div>
+                    <div class="divTableCell">50</div>
+                </div>
+                <div class="divTableRow">
+                    <div class="divTableCell">Max RTT</div>
+                    <div class="divTableCell">200</div>
+                </div>
+                <div class="divTableRow">
+                    <div class="divTableCell">Destination</div>
+                    <div class="divTableCell"></div>
+                </div>
+                <div class="divTableRow">
+                    <div class="divTableCell">Location</div>
+                    <div class="divTableCell"></div>
+                </div>
 
-                    <td>
-                        <span id="poolTTL"></span>
-                    </td>
-                    <td>
-                        <span id="poolDestination"></span>
-                    </td>
 
-                    <td>
-                        <span id="poolCountry"></span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+            </div>
+        </div>
     </div>
+
 
     <script>
         var btn = document.getElementById("ping"),
@@ -252,6 +356,7 @@
             } catch (e) {}
         }
     </script>
+
 </body>
 
 </html>
