@@ -169,6 +169,7 @@
 
                 </div>
             </div>
+
         </div> -->
 
     </div>
@@ -248,19 +249,104 @@
                     var divPingStatistics = document.getElementById("divPingStatistics");
 
                     var div = document.createElement('div');
-                    div.className = "row";
-                    div.id = "row_" + index;
-                    document.getElementById("divPingStatistics").appendChild(div);
+                    if (index == 0) {
+                        div.className = "row";
+                        div.id = "row_0";
+                        document.getElementById("divPingStatistics").appendChild(div);
+                    }
 
                     div = document.createElement('div');
                     div.className = "column";
                     div.id = "column_" + index;
-                    document.getElementById("row_" + index).appendChild(div);
+                    document.getElementById("row_0").appendChild(div);
 
                     div = document.createElement('div');
                     div.className = "card";
                     div.id = "card_" + index;
                     document.getElementById("column_" + index).appendChild(div);
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Pool address";
+
+                    var div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsPoolAddr_" + index;
+
+                    var div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+
+                    document.getElementById("card_" + index).appendChild(div0);
+
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Average RTT";
+                    div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsAverageRTT_" + index;
+                    div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+                    document.getElementById("card_" + index).appendChild(div0);
+
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Max RTT";
+                    div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsMaxRTT_" + index;
+                    div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+                    document.getElementById("card_" + index).appendChild(div0);
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Min RTT";
+                    div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsMinRTT_" + index;
+                    div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+                    document.getElementById("card_" + index).appendChild(div0);
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Destination";
+                    div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsDetination_" + index;
+                    div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+                    document.getElementById("card_" + index).appendChild(div0);
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Location";
+                    div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsLocation_" + index;
+                    div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+                    document.getElementById("card_" + index).appendChild(div0);
 
                 });
             },
@@ -301,7 +387,8 @@
                             poolList[poolID].TotalTimeMax = fromUserToPool;
                         }
 
-                        //document.getElementById("poolName").innerHTML = host;
+                        document.getElementById("statisticsPoolAddr_" + poolID).innerText = host;
+
 
                         var poolIPs = "Pool IPs: ";
                         if (Array.isArray(poolList[poolID].PoolExtInfo.ipaddresses)) {
@@ -334,6 +421,23 @@
                             totalMax = Math.round(totalMax);
                         }
 
+                        document.getElementById("statisticsDetination_" + poolID).innerHTML =
+                            Math.round(poolList[poolID].Destination) + " km. ";
+
+                        document.getElementById("statisticsLocation_" + poolID).innerHTML =
+                            poolList[poolID].Country +
+                            " " +
+                            "<img src=" +
+                            poolList[poolID].FlagURL32 +
+                            " alt=" +
+                            poolList[poolID].Country +
+                            " height=16px>";
+
+                        document.getElementById("statisticsAverageRTT_" + poolID).innerHTML = avgTime + " ms.";
+                        document.getElementById("statisticsMaxRTT_" + poolID).innerHTML = totalMax + " ms.";
+                        document.getElementById("statisticsMinRTT_" + poolID).innerHTML = totalMin + " ms.";
+
+
                         /* document.getElementById("poolTTL").innerHTML =
                              " MIN/MAX/AVG: " +
                              totalMin +
@@ -342,9 +446,6 @@
                              " ms / " +
                              avgTime +
                              " ms";
-
-                         document.getElementById("poolDestination").innerHTML =
-                             Math.round(poolList[poolID].Destination) + " km. ";
 
                          document.getElementById("poolCountry").innerHTML =
                              poolList[poolID].Country +
