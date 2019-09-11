@@ -190,6 +190,8 @@
             poolCount = 0;
         poolConnection.timeout = 10000;
 
+        const poolRegExp = "^(stratum:\/\/)?([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.){1,}(?:[a-zA-Z]{2,})(\:([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]))+$";
+
         btn.setAttribute("disabled", "true");
 
         async function getPoolExtInfo(poolAddr, index) {
@@ -210,7 +212,6 @@
             }
         }
 
-        const poolRegExp = "^(stratum:\/\/)?([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.){1,}(?:[a-zA-Z]{2,})(\:([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]))+$";
 
         poolAddrEdit.addEventListener("paste", function(e) {
             var clipboardData, pastedData;
@@ -221,8 +222,14 @@
 
             let matchAll = pastedData.split(/[\s;,]+/g);
 
-            //let firstMatch = matchAll[0];
-            //alert(matchAll);
+            matchAll.forEach(function(splitPool, index) {
+                if (splitPool.length > 8) { // ad.re:1234
+                    var re = new RegExp(poolRegExp);
+                    if (re.test(splitPool)) {
+                        miningPoolPing(splitPool);
+                    }
+                }
+            });
         });
 
         poolAddrEdit.addEventListener("keyup", function() {
@@ -240,151 +247,155 @@
         btn.addEventListener(
             "click",
             function() {
-
-                var poolAddr = document.getElementById("pooladdr").value;
-                var parser = document.createElement("a");
-                parser.href = "http://" + poolAddr;
-                if ("http://" + poolAddr === "http://") { // if something wrong with pooladdr
-                    return;
-                }
-                document.getElementById("pooladdr").value = "";
-                var theTimer;
-                var poolParsed = {
-                    hostname: parser.hostname,
-                    port: parser.port,
-                    pingCount: 5,
-                    countTimer: theTimer,
-                    TotalPacketsSent: 0,
-                    TotalPacketsReceived: 0,
-                    TotalTimeMin: 0,
-                    TotalTimeMax: 0,
-                    TotalTime: 0,
-                    PoolError: "",
-                    Destination: -1,
-                    Country: "",
-                    FlagURL32: "",
-                    PoolExtInfo: "",
-                    Tried: 0 // If already try to ping
-                };
-                poolList.push(poolParsed);
-
-                poolList.forEach(function(pool, index) {
-
-                    if (poolList[index].Tried == 0) {
-                        poolList[index].Tried = 1;
-                        if (poolList[index].Destination == -1) {
-                            poolList[index].Destination = -2;
-                            getPoolExtInfo(poolList[index].hostname, index);
-                        }
-                        ping(index);
-
-                        var divPingStatistics = document.getElementById("divPingStatistics");
-
-                        var div = document.createElement('div');
-                        if (index == 0) {
-                            div.className = "row";
-                            div.id = "row_0";
-                            document.getElementById("divPingStatistics").appendChild(div);
-                        }
-
-                        div = document.createElement('div');
-                        div.className = "column";
-                        div.id = "column_" + index;
-                        document.getElementById("row_0").appendChild(div);
-
-                        div = document.createElement('div');
-                        div.className = "card";
-                        div.id = "card_" + index;
-                        document.getElementById("column_" + index).appendChild(div);
-
-
-                        div = document.createElement('div');
-                        div.className = "divTableCell";
-                        div.innerText = "Pool address";
-
-                        var div1 = document.createElement('div');
-                        div1.className = "divTableCell";
-                        div1.id = "statisticsPoolAddr_" + index;
-
-                        var div0 = document.createElement('div');
-                        div0.className = "divTableRow";
-                        div0.appendChild(div);
-                        div0.appendChild(div1);
-
-                        document.getElementById("card_" + index).appendChild(div0);
-
-
-
-                        div = document.createElement('div');
-                        div.className = "divTableCell";
-                        div.innerText = "Average RTT";
-                        div1 = document.createElement('div');
-                        div1.className = "divTableCell";
-                        div1.id = "statisticsAverageRTT_" + index;
-                        div0 = document.createElement('div');
-                        div0.className = "divTableRow";
-                        div0.appendChild(div);
-                        div0.appendChild(div1);
-                        document.getElementById("card_" + index).appendChild(div0);
-
-
-
-                        div = document.createElement('div');
-                        div.className = "divTableCell";
-                        div.innerText = "Max RTT";
-                        div1 = document.createElement('div');
-                        div1.className = "divTableCell";
-                        div1.id = "statisticsMaxRTT_" + index;
-                        div0 = document.createElement('div');
-                        div0.className = "divTableRow";
-                        div0.appendChild(div);
-                        div0.appendChild(div1);
-                        document.getElementById("card_" + index).appendChild(div0);
-
-
-                        div = document.createElement('div');
-                        div.className = "divTableCell";
-                        div.innerText = "Min RTT";
-                        div1 = document.createElement('div');
-                        div1.className = "divTableCell";
-                        div1.id = "statisticsMinRTT_" + index;
-                        div0 = document.createElement('div');
-                        div0.className = "divTableRow";
-                        div0.appendChild(div);
-                        div0.appendChild(div1);
-                        document.getElementById("card_" + index).appendChild(div0);
-
-
-                        div = document.createElement('div');
-                        div.className = "divTableCell";
-                        div.innerText = "Destination";
-                        div1 = document.createElement('div');
-                        div1.className = "divTableCell";
-                        div1.id = "statisticsDetination_" + index;
-                        div0 = document.createElement('div');
-                        div0.className = "divTableRow";
-                        div0.appendChild(div);
-                        div0.appendChild(div1);
-                        document.getElementById("card_" + index).appendChild(div0);
-
-
-                        div = document.createElement('div');
-                        div.className = "divTableCell";
-                        div.innerText = "Location";
-                        div1 = document.createElement('div');
-                        div1.className = "divTableCell";
-                        div1.id = "statisticsLocation_" + index;
-                        div0 = document.createElement('div');
-                        div0.className = "divTableRow";
-                        div0.appendChild(div);
-                        div0.appendChild(div1);
-                        document.getElementById("card_" + index).appendChild(div0);
-                    }
-
-                });
+                miningPoolPing(document.getElementById("pooladdr").value);
             },
             false
         );
+
+        function miningPoolPing(poolAddr) {
+            //var poolAddr = 
+            var parser = document.createElement("a");
+            parser.href = "http://" + poolAddr;
+            if ("http://" + poolAddr === "http://") { // if something wrong with pooladdr
+                return;
+            }
+            document.getElementById("pooladdr").value = "";
+            var theTimer;
+            var poolParsed = {
+                hostname: parser.hostname,
+                port: parser.port,
+                pingCount: 5,
+                countTimer: theTimer,
+                TotalPacketsSent: 0,
+                TotalPacketsReceived: 0,
+                TotalTimeMin: 0,
+                TotalTimeMax: 0,
+                TotalTime: 0,
+                PoolError: "",
+                Destination: -1,
+                Country: "",
+                FlagURL32: "",
+                PoolExtInfo: "",
+                Tried: 0 // If already try to ping
+            };
+            poolList.push(poolParsed);
+
+            poolList.forEach(function(pool, index) {
+
+                if (poolList[index].Tried == 0) {
+                    poolList[index].Tried = 1;
+                    if (poolList[index].Destination == -1) {
+                        poolList[index].Destination = -2;
+                        getPoolExtInfo(poolList[index].hostname, index);
+                    }
+                    ping(index);
+
+                    var divPingStatistics = document.getElementById("divPingStatistics");
+
+                    var div = document.createElement('div');
+                    if (index == 0) {
+                        div.className = "row";
+                        div.id = "row_0";
+                        document.getElementById("divPingStatistics").appendChild(div);
+                    }
+
+                    div = document.createElement('div');
+                    div.className = "column";
+                    div.id = "column_" + index;
+                    document.getElementById("row_0").appendChild(div);
+
+                    div = document.createElement('div');
+                    div.className = "card";
+                    div.id = "card_" + index;
+                    document.getElementById("column_" + index).appendChild(div);
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Pool address";
+
+                    var div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsPoolAddr_" + index;
+
+                    var div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+
+                    document.getElementById("card_" + index).appendChild(div0);
+
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Average RTT";
+                    div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsAverageRTT_" + index;
+                    div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+                    document.getElementById("card_" + index).appendChild(div0);
+
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Max RTT";
+                    div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsMaxRTT_" + index;
+                    div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+                    document.getElementById("card_" + index).appendChild(div0);
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Min RTT";
+                    div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsMinRTT_" + index;
+                    div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+                    document.getElementById("card_" + index).appendChild(div0);
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Destination";
+                    div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsDetination_" + index;
+                    div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+                    document.getElementById("card_" + index).appendChild(div0);
+
+
+                    div = document.createElement('div');
+                    div.className = "divTableCell";
+                    div.innerText = "Location";
+                    div1 = document.createElement('div');
+                    div1.className = "divTableCell";
+                    div1.id = "statisticsLocation_" + index;
+                    div0 = document.createElement('div');
+                    div0.className = "divTableRow";
+                    div0.appendChild(div);
+                    div0.appendChild(div1);
+                    document.getElementById("card_" + index).appendChild(div0);
+                }
+
+            });
+
+        }
 
         function ping(poolID) {
             var host = poolList[poolID].hostname;
