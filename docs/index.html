@@ -255,7 +255,7 @@
             "click",
             function() {
                 preparePool(document.getElementById("pooladdr").value);
-                miningPoolPing(poolList.length);
+                miningPoolPing(poolList.length - 1);
                 document.getElementById("pooladdr").value = "";
             },
             false
