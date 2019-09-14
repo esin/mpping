@@ -441,6 +441,18 @@
             div0.appendChild(div);
             div0.appendChild(div1);
             document.getElementById("card_" + index).appendChild(div0);
+
+            div = document.createElement("div");
+            div.className = "divTableCell";
+            div.innerText = "Additional IPs";
+            div1 = document.createElement("div");
+            div1.className = "divTableCell";
+            div1.id = "statisticsAdditionalIPs_" + index;
+            div0 = document.createElement("div");
+            div0.className = "divTableRow";
+            div0.appendChild(div);
+            div0.appendChild(div1);
+            document.getElementById("card_" + index).appendChild(div0);
           }
         });
       }
