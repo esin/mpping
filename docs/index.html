@@ -1,153 +1,200 @@
 <html>
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito&display=swap"
+      rel="stylesheet"
+    />
     <title>MPPing :: MiningPool (ₜᵣᵤₑ)Ping utility</title>
 
     <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-        }
-        
-        * {
-            box-sizing: border-box;
-        }
-        
+      body {
+        font-family: "Nunito", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      .column {
+        float: left;
+        width: 25%;
+        padding: 0 10px;
+      }
+
+      .row {
+        margin: 0 -5px;
+      }
+
+      .row:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+
+      .card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        /* this adds the "card" effect */
+        padding: 16px;
+        text-align: left;
+        background-color: #f1f1f1;
+      }
+      /* Responsive columns - one column layout (vertical) on small screens */
+
+      @media screen and (max-width: 1200px) {
         .column {
-            float: left;
-            width: 20%;
-            padding: 0 10px;
+          width: 50%;
+          display: block;
+          margin-bottom: 20px;
         }
-        
-        .row {
-            margin: 0 -5px;
+      }
+
+      @media screen and (max-width: 600px) {
+        .column {
+          width: 100%;
+          display: block;
+          margin-bottom: 20px;
         }
-        
-        .row:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        
-        .card {
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-            /* this adds the "card" effect */
-            padding: 16px;
-            text-align: left;
-            background-color: #f1f1f1;
-        }
-        /* Responsive columns - one column layout (vertical) on small screens */
-        
-        @media screen and (max-width: 1200px) {
-            .column {
-                width: 50%;
-                display: block;
-                margin-bottom: 20px;
-            }
-        }
-        
-        @media screen and (max-width: 600px) {
-            .column {
-                width: 100%;
-                display: block;
-                margin-bottom: 20px;
-            }
-        }
-        
-        div.pingStatistics {
-            border: 1px solid #AAAAAA;
-            width: 30%;
-            text-align: left;
-            border-collapse: collapse;
-        }
-        
-        .divTable.pingStatistics .divTableCell,
-        .divTable.pingStatistics .divTableHead {
-            border: 0px solid #AAAAAA;
-        }
-        
-        .divTable.pingStatistics .divTableBody .divTableCell {
-            font-size: 13px;
-        }
-        
-        .pingStatistics .tableFootStyle {
-            font-size: 14px;
-        }
-        
-        .pingStatistics .tableFootStyle .links {
-            text-align: right;
-        }
-        
-        .pingStatistics .tableFootStyle .links a {
-            display: inline-block;
-            background: #1C6EA4;
-            color: #FFFFFF;
-            padding: 2px 8px;
-            border-radius: 5px;
-        }
-        
-        .pingStatistics.outerTableFooter {
-            border-top: none;
-        }
-        
-        .pingStatistics.outerTableFooter .tableFootStyle {
-            padding: 3px 5px;
-        }
-        
-        .divTable {
-            display: table;
-        }
-        
-        .divTableRow {
-            display: table-row;
-        }
-        
-        .divTableHeading {
-            display: table-header-group;
-        }
-        
-        .divTableCell,
-        .divTableHead {
-            display: table-cell;
-        }
-        
-        .divTableHeading {
-            display: table-header-group;
-        }
-        
-        .divTableFoot {
-            display: table-footer-group;
-        }
-        
-        .divTableBody {
-            display: table-row-group;
-        }
+      }
+
+      div.pingStatistics {
+        border: 1px solid #aaaaaa;
+        width: 30%;
+        text-align: left;
+        border-collapse: collapse;
+      }
+
+      .divTable.pingStatistics .divTableCell,
+      .divTable.pingStatistics .divTableHead {
+        border: 0px solid #aaaaaa;
+      }
+
+      .divTable.pingStatistics .divTableBody .divTableCell {
+        font-size: 13px;
+      }
+
+      .pingStatistics .tableFootStyle {
+        font-size: 14px;
+      }
+
+      .pingStatistics .tableFootStyle .links {
+        text-align: right;
+      }
+
+      .pingStatistics .tableFootStyle .links a {
+        display: inline-block;
+        background: #1c6ea4;
+        color: #ffffff;
+        padding: 2px 8px;
+        border-radius: 5px;
+      }
+
+      .pingStatistics.outerTableFooter {
+        border-top: none;
+      }
+
+      .pingStatistics.outerTableFooter .tableFootStyle {
+        padding: 3px 5px;
+      }
+
+      .divTable {
+        display: table;
+      }
+
+      .divTableRow {
+        display: table-row;
+      }
+
+      .divTableHeading {
+        display: table-header-group;
+      }
+
+      .divTableCell,
+      .divTableHead {
+        display: table-cell;
+      }
+
+      .divTableHeading {
+        display: table-header-group;
+      }
+
+      .divTableFoot {
+        display: table-footer-group;
+      }
+
+      .divTableBody {
+        display: table-row-group;
+      }
+
+      /* Full-width input fields */
+      .form-container input[type="text"],
+      .form-container input[type="password"] {
+        width: 70%;
+        padding: 15px;
+        margin: 5px 0 22px 0;
+        border: none;
+        background: #f1f1f1;
+      }
+
+      /* When the inputs get focus, do something */
+      .form-container input[type="text"]:focus,
+      .form-container input[type="password"]:focus {
+        background-color: #ddd;
+        outline: none;
+      }
+
+      .form-container .btn {
+        background-color: #4caf50;
+        color: white;
+        padding: 16px 20px;
+        border: none;
+        cursor: pointer;
+        width: 50px;
+        margin-bottom: 10px;
+        opacity: 0.8;
+      }
+
+      /* Add a red background color to the cancel button */
+      .form-container .cancel {
+        background-color: red;
+      }
+
+      /* Add some hover effects to buttons */
+      .form-container .btn:hover,
+      .open-button:hover {
+        opacity: 1;
+      }
     </style>
+  </head>
 
-</head>
-
-<body>
-    <br /><br /> <br />
+  <body>
+    <br /><br />
+    <br />
     <p>
-        pools for testing: eu.zec.slushpool.com:4444 us-east.zec.slushpool.com:4444 cn.zec.slushpool.com:4444 grin29-us.f2pool.com:13654 grin29.f2pool.com:13654
+      pools for testing: eu.zec.slushpool.com:4444
+      us-east.zec.slushpool.com:4444 cn.zec.slushpool.com:4444
+      grin29-us.f2pool.com:13654 grin29.f2pool.com:13654
     </p>
     <br /><br />
-    <div id="mainDiv" style="text-align: center">
-        <input id="pooladdr" type="text" name="pooladdr" spellcheck="false" placeholder="Enter pool address" />
-        <button id="ping" type="submit" class="Button Button--blue Button--large ">
-        <span class="Button--text">+</span>
+    <div id="mainDiv" style="text-align: center" class="form-container">
+      <input
+        id="pooladdr"
+        type="text"
+        name="pooladdr"
+        spellcheck="false"
+        placeholder="Enter pool address"
+      />
+      <button id="ping" type="submit" class="btn">
+        <span>+</span>
       </button>
     </div>
 
     <br />
 
-
     <div id="divPingStatistics">
-
-        <!-- <div class="row">
+      <!-- <div class="row">
             <div class="column">
                 <div class="card">
                     <div class="divTableRow">
@@ -178,338 +225,338 @@
 
             </div>
         </div> -->
-
     </div>
 
-
     <script>
-        var btn = document.getElementById("ping"),
-            poolAddrEdit = document.getElementById("pooladdr"),
+      var btn = document.getElementById("ping"),
+        poolAddrEdit = document.getElementById("pooladdr"),
+        poolList = [],
+        poolCount = 0;
+      //poolConnection.timeout = 10000;
 
-            poolList = [],
-            poolCount = 0;
-        //poolConnection.timeout = 10000;
+      const poolRegExp =
+        "^(stratum:\/\/)?([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.){1,}(?:[a-zA-Z]{2,})(\:([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]))+$";
 
-        const poolRegExp = "^(stratum:\/\/)?([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.){1,}(?:[a-zA-Z]{2,})(\:([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]))+$";
+      btn.setAttribute("disabled", "true");
 
-        btn.setAttribute("disabled", "true");
-
-        async function getPoolExtInfo(poolAddr, index) {
-            try {
-                const resp = await fetch(
-                    "https://66q7gzyjbf.execute-api.eu-west-1.amazonaws.com/v1/destination/?pooladdr=" +
-                    poolAddr
-                );
-                resp.json().then(function(data) {
-                    poolList[index].Destination = data.ipaddresses[0].dest;
-                    poolList[index].Country = data.ipaddresses[0].country;
-                    poolList[index].FlagURL32 = data.ipaddresses[0].flagurl32;
-                    poolList[index].PoolExtInfo = data;
-                    console.log(data);
-                });
-            } catch (err) {
-                console.log(err);
-            }
+      async function getPoolExtInfo(poolAddr, index) {
+        try {
+          const resp = await fetch(
+            "https://66q7gzyjbf.execute-api.eu-west-1.amazonaws.com/v1/destination/?pooladdr=" +
+              poolAddr
+          );
+          resp.json().then(function(data) {
+            poolList[index].Destination = data.ipaddresses[0].dest;
+            poolList[index].Country = data.ipaddresses[0].country;
+            poolList[index].FlagURL32 = data.ipaddresses[0].flagurl32;
+            poolList[index].PoolExtInfo = data;
+            console.log(data);
+          });
+        } catch (err) {
+          console.log(err);
         }
+      }
 
+      poolAddrEdit.addEventListener("paste", function(e) {
+        var clipboardData, pastedData;
+        e.stopPropagation();
+        e.preventDefault();
+        clipboardData = e.clipboardData || window.clipboardData;
+        pastedData = clipboardData.getData("Text");
 
-        poolAddrEdit.addEventListener("paste", function(e) {
-            var clipboardData, pastedData;
-            e.stopPropagation();
-            e.preventDefault();
-            clipboardData = e.clipboardData || window.clipboardData;
-            pastedData = clipboardData.getData('Text');
+        let matchAll = pastedData.split(/[\s;,]+/g);
 
-            let matchAll = pastedData.split(/[\s;,]+/g);
-
-            matchAll.forEach(function(splitPool, index) {
-                if (splitPool.length > 8) { // ad.re:1234
-                    var re = new RegExp(poolRegExp);
-                    if (re.test(splitPool)) {
-                        preparePool(splitPool);
-                    }
-                }
-                document.getElementById("pooladdr").value = "";
-            });
-
-            if (poolList.length > 0) {
-                poolList.forEach(function(poolAddr, index) {
-                    miningPoolPing(index);
-                });
-            }
-        });
-
-        poolAddrEdit.addEventListener("keyup", function() {
-            var poolAddr = document.getElementById("pooladdr").value;
-            //(stratum[s]?:\/\/)?
-
+        matchAll.forEach(function(splitPool, index) {
+          if (splitPool.length > 8) {
+            // ad.re:1234
             var re = new RegExp(poolRegExp);
-            if (re.test(poolAddr)) {
-                btn.removeAttribute("disabled");
-            } else {
-                btn.setAttribute("disabled", "true");
+            if (re.test(splitPool)) {
+              preparePool(splitPool);
             }
+          }
+          document.getElementById("pooladdr").value = "";
         });
 
-        btn.addEventListener(
-            "click",
-            function() {
-                preparePool(document.getElementById("pooladdr").value);
-                miningPoolPing(poolList.length - 1);
-                document.getElementById("pooladdr").value = "";
-            },
-            false
-        );
+        if (poolList.length > 0) {
+          poolList.forEach(function(poolAddr, index) {
+            miningPoolPing(index);
+          });
+        }
+      });
 
-        function preparePool(poolAddr) {
-            var parser = document.createElement("a");
-            parser.href = "http://" + poolAddr;
-            if ("http://" + poolAddr === "http://") { // if something wrong with pooladdr
-                return;
+      poolAddrEdit.addEventListener("keyup", function() {
+        var poolAddr = document.getElementById("pooladdr").value;
+        //(stratum[s]?:\/\/)?
+
+        var re = new RegExp(poolRegExp);
+        if (re.test(poolAddr)) {
+          btn.removeAttribute("disabled");
+        } else {
+          btn.setAttribute("disabled", "true");
+        }
+      });
+
+      btn.addEventListener(
+        "click",
+        function() {
+          preparePool(document.getElementById("pooladdr").value);
+          miningPoolPing(poolList.length - 1);
+          document.getElementById("pooladdr").value = "";
+        },
+        false
+      );
+
+      function preparePool(poolAddr) {
+        var parser = document.createElement("a");
+        parser.href = "http://" + poolAddr;
+        if ("http://" + poolAddr === "http://") {
+          // if something wrong with pooladdr
+          return;
+        }
+
+        var theTimer;
+        var poolParsed = {
+          hostname: parser.hostname,
+          port: parser.port,
+          pingCount: 5,
+          countTimer: theTimer,
+          TotalPacketsSent: 0,
+          TotalPacketsReceived: 0,
+          TotalTimeMin: 0,
+          TotalTimeMax: 0,
+          TotalTime: 0,
+          PoolError: "",
+          Destination: -1,
+          Country: "",
+          FlagURL32: "",
+          PoolExtInfo: "",
+          Tried: 0 // If already try to ping
+        };
+        poolList.push(poolParsed);
+      }
+
+      async function miningPoolPing(index) {
+        await new Promise(resolve => {
+          if (poolList[index].Tried == 0) {
+            poolList[index].Tried = 1;
+            if (poolList[index].Destination == -1) {
+              poolList[index].Destination = -2;
+              getPoolExtInfo(poolList[index].hostname, index);
+            }
+            ping(index);
+
+            var divPingStatistics = document.getElementById(
+              "divPingStatistics"
+            );
+
+            var div = document.createElement("div");
+            if (index == 0) {
+              div.className = "row";
+              div.id = "row_0";
+              document.getElementById("divPingStatistics").appendChild(div);
             }
 
-            var theTimer;
-            var poolParsed = {
-                hostname: parser.hostname,
-                port: parser.port,
-                pingCount: 5,
-                countTimer: theTimer,
-                TotalPacketsSent: 0,
-                TotalPacketsReceived: 0,
-                TotalTimeMin: 0,
-                TotalTimeMax: 0,
-                TotalTime: 0,
-                PoolError: "",
-                Destination: -1,
-                Country: "",
-                FlagURL32: "",
-                PoolExtInfo: "",
-                Tried: 0 // If already try to ping
-            };
-            poolList.push(poolParsed);
+            div = document.createElement("div");
+            div.className = "column";
+            div.id = "column_" + index;
+            document.getElementById("row_0").appendChild(div);
+
+            div = document.createElement("div");
+            div.className = "card";
+            div.id = "card_" + index;
+            document.getElementById("column_" + index).appendChild(div);
+
+            div = document.createElement("div");
+            div.className = "divTableCell";
+            div.innerText = "Pool address";
+
+            var div1 = document.createElement("div");
+            div1.className = "divTableCell";
+            div1.id = "statisticsPoolAddr_" + index;
+
+            var div0 = document.createElement("div");
+            div0.className = "divTableRow";
+            div0.appendChild(div);
+            div0.appendChild(div1);
+
+            document.getElementById("card_" + index).appendChild(div0);
+
+            div = document.createElement("div");
+            div.className = "divTableCell";
+            div.innerText = "Average RTT";
+            div1 = document.createElement("div");
+            div1.className = "divTableCell";
+            div1.id = "statisticsAverageRTT_" + index;
+            div0 = document.createElement("div");
+            div0.className = "divTableRow";
+            div0.appendChild(div);
+            div0.appendChild(div1);
+            document.getElementById("card_" + index).appendChild(div0);
+
+            div = document.createElement("div");
+            div.className = "divTableCell";
+            div.innerText = "Max RTT";
+            div1 = document.createElement("div");
+            div1.className = "divTableCell";
+            div1.id = "statisticsMaxRTT_" + index;
+            div0 = document.createElement("div");
+            div0.className = "divTableRow";
+            div0.appendChild(div);
+            div0.appendChild(div1);
+            document.getElementById("card_" + index).appendChild(div0);
+
+            div = document.createElement("div");
+            div.className = "divTableCell";
+            div.innerText = "Min RTT";
+            div1 = document.createElement("div");
+            div1.className = "divTableCell";
+            div1.id = "statisticsMinRTT_" + index;
+            div0 = document.createElement("div");
+            div0.className = "divTableRow";
+            div0.appendChild(div);
+            div0.appendChild(div1);
+            document.getElementById("card_" + index).appendChild(div0);
+
+            div = document.createElement("div");
+            div.className = "divTableCell";
+            div.innerText = "Destination";
+            div1 = document.createElement("div");
+            div1.className = "divTableCell";
+            div1.id = "statisticsDetination_" + index;
+            div0 = document.createElement("div");
+            div0.className = "divTableRow";
+            div0.appendChild(div);
+            div0.appendChild(div1);
+            document.getElementById("card_" + index).appendChild(div0);
+
+            div = document.createElement("div");
+            div.className = "divTableCell";
+            div.innerText = "Location";
+            div1 = document.createElement("div");
+            div1.className = "divTableCell";
+            div1.id = "statisticsLocation_" + index;
+            div0 = document.createElement("div");
+            div0.className = "divTableRow";
+            div0.appendChild(div);
+            div0.appendChild(div1);
+            document.getElementById("card_" + index).appendChild(div0);
+          }
+        });
+      }
+
+      function ping(poolID) {
+        var host = poolList[poolID].hostname;
+        var port = poolList[poolID].port;
+        var counter = poolList[poolID].pingCount;
+        var theTimer = poolList[poolID].countTimer;
+        if (counter === 0) {
+          clearTimeout(theTimer);
+          return;
         }
+        var beforeConnect = new Date().getTime();
+        try {
+          var proto = location.protocol == "https:" ? "https" : "http";
+          var poolConnection = new XMLHttpRequest();
+          poolConnection.timeout = 10000;
+          poolConnection.open("GET", proto + "://" + host + ":" + port, true);
+          poolConnection.onreadystatechange = function() {
+            if (poolConnection.readyState == 4) {
+              var firstReply = new Date().getTime();
+              var fromUserToPool = firstReply - beforeConnect;
+              poolList[poolID].TotalPacketsReceived++;
+              poolList[poolID].TotalTime += fromUserToPool;
 
-        async function miningPoolPing(index) {
-            await new Promise(resolve => {
-                if (poolList[index].Tried == 0) {
-                    poolList[index].Tried = 1;
-                    if (poolList[index].Destination == -1) {
-                        poolList[index].Destination = -2;
-                        getPoolExtInfo(poolList[index].hostname, index);
-                    }
-                    ping(index);
+              if (
+                fromUserToPool < poolList[poolID].TotalTimeMin ||
+                poolList[poolID].TotalTimeMin === 0
+              ) {
+                poolList[poolID].TotalTimeMin = fromUserToPool;
+              }
 
-                    var divPingStatistics = document.getElementById("divPingStatistics");
+              if (
+                fromUserToPool > poolList[poolID].TotalTimeMax ||
+                poolList[poolID].TotalTimeMax === 0
+              ) {
+                poolList[poolID].TotalTimeMax = fromUserToPool;
+              }
 
-                    var div = document.createElement('div');
-                    if (index == 0) {
-                        div.className = "row";
-                        div.id = "row_0";
-                        document.getElementById("divPingStatistics").appendChild(div);
-                    }
+              document.getElementById(
+                "statisticsPoolAddr_" + poolID
+              ).innerText = host;
 
-                    div = document.createElement('div');
-                    div.className = "column";
-                    div.id = "column_" + index;
-                    document.getElementById("row_0").appendChild(div);
+              var poolIPs = "Pool IPs: ";
+              if (Array.isArray(poolList[poolID].PoolExtInfo.ipaddresses)) {
+                poolList[poolID].PoolExtInfo.ipaddresses.forEach(function(val) {
+                  poolIPs = poolIPs + " " + val.ip;
+                });
+              }
 
-                    div = document.createElement('div');
-                    div.className = "card";
-                    div.id = "card_" + index;
-                    document.getElementById("column_" + index).appendChild(div);
+              var avgTime = 0;
+              if (poolList[poolID].TotalPacketsReceived != 0) {
+                avgTime =
+                  poolList[poolID].TotalTime /
+                  poolList[poolID].TotalPacketsReceived;
+              }
 
+              if (avgTime > 1) {
+                avgTime = Math.round(avgTime);
+              }
 
-                    div = document.createElement('div');
-                    div.className = "divTableCell";
-                    div.innerText = "Pool address";
+              var totalMin, totalMax;
+              totalMin = poolList[poolID].TotalTimeMin;
+              if (totalMin > 1) {
+                totalMin = Math.round(totalMin);
+              }
 
-                    var div1 = document.createElement('div');
-                    div1.className = "divTableCell";
-                    div1.id = "statisticsPoolAddr_" + index;
+              totalMax = poolList[poolID].TotalTimeMax;
+              if (totalMax > 1) {
+                totalMax = Math.round(totalMax);
+              }
 
-                    var div0 = document.createElement('div');
-                    div0.className = "divTableRow";
-                    div0.appendChild(div);
-                    div0.appendChild(div1);
+              document.getElementById(
+                "statisticsDetination_" + poolID
+              ).innerHTML = Math.round(poolList[poolID].Destination) + " km. ";
 
-                    document.getElementById("card_" + index).appendChild(div0);
+              document.getElementById(
+                "statisticsLocation_" + poolID
+              ).innerHTML =
+                poolList[poolID].Country +
+                " " +
+                "<img src=" +
+                poolList[poolID].FlagURL32 +
+                " alt=" +
+                poolList[poolID].Country +
+                " height=16px>";
 
-
-
-                    div = document.createElement('div');
-                    div.className = "divTableCell";
-                    div.innerText = "Average RTT";
-                    div1 = document.createElement('div');
-                    div1.className = "divTableCell";
-                    div1.id = "statisticsAverageRTT_" + index;
-                    div0 = document.createElement('div');
-                    div0.className = "divTableRow";
-                    div0.appendChild(div);
-                    div0.appendChild(div1);
-                    document.getElementById("card_" + index).appendChild(div0);
-
-
-
-                    div = document.createElement('div');
-                    div.className = "divTableCell";
-                    div.innerText = "Max RTT";
-                    div1 = document.createElement('div');
-                    div1.className = "divTableCell";
-                    div1.id = "statisticsMaxRTT_" + index;
-                    div0 = document.createElement('div');
-                    div0.className = "divTableRow";
-                    div0.appendChild(div);
-                    div0.appendChild(div1);
-                    document.getElementById("card_" + index).appendChild(div0);
-
-
-                    div = document.createElement('div');
-                    div.className = "divTableCell";
-                    div.innerText = "Min RTT";
-                    div1 = document.createElement('div');
-                    div1.className = "divTableCell";
-                    div1.id = "statisticsMinRTT_" + index;
-                    div0 = document.createElement('div');
-                    div0.className = "divTableRow";
-                    div0.appendChild(div);
-                    div0.appendChild(div1);
-                    document.getElementById("card_" + index).appendChild(div0);
-
-
-                    div = document.createElement('div');
-                    div.className = "divTableCell";
-                    div.innerText = "Destination";
-                    div1 = document.createElement('div');
-                    div1.className = "divTableCell";
-                    div1.id = "statisticsDetination_" + index;
-                    div0 = document.createElement('div');
-                    div0.className = "divTableRow";
-                    div0.appendChild(div);
-                    div0.appendChild(div1);
-                    document.getElementById("card_" + index).appendChild(div0);
-
-
-                    div = document.createElement('div');
-                    div.className = "divTableCell";
-                    div.innerText = "Location";
-                    div1 = document.createElement('div');
-                    div1.className = "divTableCell";
-                    div1.id = "statisticsLocation_" + index;
-                    div0 = document.createElement('div');
-                    div0.className = "divTableRow";
-                    div0.appendChild(div);
-                    div0.appendChild(div1);
-                    document.getElementById("card_" + index).appendChild(div0);
-                }
-            });
-        }
-
-        function ping(poolID) {
-            var host = poolList[poolID].hostname;
-            var port = poolList[poolID].port;
-            var counter = poolList[poolID].pingCount;
-            var theTimer = poolList[poolID].countTimer;
-            if (counter === 0) {
-                clearTimeout(theTimer);
-                return;
+              document.getElementById(
+                "statisticsAverageRTT_" + poolID
+              ).innerHTML = avgTime + " ms.";
+              document.getElementById("statisticsMaxRTT_" + poolID).innerHTML =
+                totalMax + " ms.";
+              document.getElementById("statisticsMinRTT_" + poolID).innerHTML =
+                totalMin + " ms.";
+              theTimer = setTimeout(function() {
+                poolList[poolID].countTimer = theTimer;
+                ping(poolID);
+              }, 1000);
+              poolList[poolID].pingCount--;
             }
-            var beforeConnect = new Date().getTime();
-            try {
-                var proto = location.protocol == "https:" ? "https" : "http";
-                var poolConnection = new XMLHttpRequest();
-                poolConnection.timeout = 10000;
-                poolConnection.open("GET", proto + "://" + host + ":" + port, true);
-                poolConnection.onreadystatechange = function() {
-                    if (poolConnection.readyState == 4) {
-                        var firstReply = new Date().getTime();
-                        var fromUserToPool = firstReply - beforeConnect;
-                        poolList[poolID].TotalPacketsReceived++;
-                        poolList[poolID].TotalTime += fromUserToPool;
+          };
+          poolConnection.ontimeout = function(e) {
+            console.log(e);
+          };
 
-                        if (
-                            fromUserToPool < poolList[poolID].TotalTimeMin ||
-                            poolList[poolID].TotalTimeMin === 0
-                        ) {
-                            poolList[poolID].TotalTimeMin = fromUserToPool;
-                        }
-
-                        if (
-                            fromUserToPool > poolList[poolID].TotalTimeMax ||
-                            poolList[poolID].TotalTimeMax === 0
-                        ) {
-                            poolList[poolID].TotalTimeMax = fromUserToPool;
-                        }
-
-                        document.getElementById("statisticsPoolAddr_" + poolID).innerText = host;
-
-                        var poolIPs = "Pool IPs: ";
-                        if (Array.isArray(poolList[poolID].PoolExtInfo.ipaddresses)) {
-                            poolList[poolID].PoolExtInfo.ipaddresses.forEach(function(val) {
-                                poolIPs = poolIPs + " " + val.ip;
-                            });
-                        }
-
-                        var avgTime = 0;
-                        if (poolList[poolID].TotalPacketsReceived != 0) {
-                            avgTime =
-                                poolList[poolID].TotalTime /
-                                poolList[poolID].TotalPacketsReceived;
-                        }
-
-                        if (avgTime > 1) {
-                            avgTime = Math.round(avgTime);
-                        }
-
-                        var totalMin, totalMax;
-                        totalMin = poolList[poolID].TotalTimeMin;
-                        if (totalMin > 1) {
-                            totalMin = Math.round(totalMin);
-                        }
-
-                        totalMax = poolList[poolID].TotalTimeMax;
-                        if (totalMax > 1) {
-                            totalMax = Math.round(totalMax);
-                        }
-
-                        document.getElementById("statisticsDetination_" + poolID).innerHTML =
-                            Math.round(poolList[poolID].Destination) + " km. ";
-
-                        document.getElementById("statisticsLocation_" + poolID).innerHTML =
-                            poolList[poolID].Country +
-                            " " +
-                            "<img src=" +
-                            poolList[poolID].FlagURL32 +
-                            " alt=" +
-                            poolList[poolID].Country +
-                            " height=16px>";
-
-                        document.getElementById("statisticsAverageRTT_" + poolID).innerHTML = avgTime + " ms.";
-                        document.getElementById("statisticsMaxRTT_" + poolID).innerHTML = totalMax + " ms.";
-                        document.getElementById("statisticsMinRTT_" + poolID).innerHTML = totalMin + " ms.";
-                        theTimer = setTimeout(function() {
-                            poolList[poolID].countTimer = theTimer;
-                            ping(poolID);
-                        }, 1000);
-                        poolList[poolID].pingCount--;
-                    }
-                };
-                poolConnection.ontimeout = function(e) {
-                    console.log(e);
-                };
-
-                poolConnection.onerror = function(e) {
-                    console.log(e);
-                };
-                try {
-                    poolConnection.send();
-                    poolList[poolID].TotalPacketsSent++;
-                } catch (e) {
-                    console.log(e);
-                }
-            } catch (e) {}
-        }
+          poolConnection.onerror = function(e) {
+            console.log(e);
+          };
+          try {
+            poolConnection.send();
+            poolList[poolID].TotalPacketsSent++;
+          } catch (e) {
+            console.log(e);
+          }
+        } catch (e) {}
+      }
     </script>
-
-</body>
-
+  </body>
 </html>
