@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
 	"net"
@@ -195,22 +194,6 @@ func main() {
 			countPackets--
 		}
 
-		// for i := len(poolList) - 1; i >= 0; i-- { // Remove bad pools. TODO: move into separate func
-		// 	if poolList[i].PoolError != "" {
-		// 		if len(poolList) == 1 {
-		// 			if len(badPoolList) > 0 {
-		// 				fmt.Printf("%-37s%-37s\n", "POOLSERVER", "ERROR")
-		// 				for _, poolServer := range badPoolList {
-		// 					poolPort = strconv.Itoa(int(poolServer.PoolPort))
-		// 					fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolServer.PoolDomain, poolPort), poolServer.PoolError)
-		// 				}
-		// 			}
-		// 			onStop()
-		// 		}
-		// 		poolList = append(poolList[:i], poolList[i+i:]...)
-		// 	}
-		// }
-
 		if len(poolList) == 0 {
 			onStop()
 		}
@@ -237,25 +220,30 @@ func main() {
 				poolIPAddr = fmt.Sprintf("[%s]", poolServer.PoolIPv6)
 			}
 
-			beforeConnect := getCurrentTimeStamp()
+			//
 			poolList[poolID].TotalPacketsSent++
+
 			poolConnection, err := net.Dial("tcp", fmt.Sprintf("%s:%s", poolIPAddr, poolPort))
 			if err != nil {
 				poolList[poolID].PoolError = fmt.Sprintf("%v", err)
-				//badPoolList = append(badPoolList, poolList[poolID])
 				poolPort = strconv.Itoa(int(poolServer.PoolPort))
 				fmt.Printf("%-37s%-37s\n", fmt.Sprintf("%s:%s", poolServer.PoolDomain, poolPort), fmt.Sprintf("%v", err))
 				continue
 			}
+			defer poolConnection.Close()
 
-			fmt.Fprintf(poolConnection, request+"\n")
-			_, _ = bufio.NewReader(poolConnection).ReadString('\n')
+			poolConnection.Write([]byte("GET / HTTP/1.0\r\n\r\n"))
+
+			readData := make([]byte, 1)
+			beforeConnect := getCurrentTimeStamp()
+			_, _ = poolConnection.Read(readData)
+			// if err != nil {
+			// 	 panic(err)
+			// }
 
 			firstReply := getCurrentTimeStamp()
-
+			fmt.Fprintf(poolConnection, request+"\n")
 			fromUserToPool := uint64((firstReply - beforeConnect))
-
-			poolConnection.Close()
 
 			poolList[poolID].TotalTime += fromUserToPool
 			if fromUserToPool < poolList[poolID].TotalTimeMin || poolList[poolID].TotalTimeMin == 0 {
@@ -285,9 +273,10 @@ func main() {
 		if !oldStylePing {
 			currentCurse.MoveUp(poolListCount)
 		}
+		<-c
 	}
 
-	<-c
+	// <-c
 
-	os.Exit(0)
+	//	os.Exit(0)
 }
